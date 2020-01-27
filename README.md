@@ -21,14 +21,6 @@ Therefore I have build a minimal dash [NGL](https://github.com/arose/ngl) viewer
 
 ## Contributing
 
-The following sources helped me in building it:
-+ https://github.com/lilyminium/dash-ngl - Complex dash NGL component
-+ https://github.com/McMenemy/viztein - Light React wrapper around NGL
-+ https://github.com/Downchuck/react-ngl-demo - React SPA that uses NGL and can load/display a PDB+ 
-+ https://github.com/ucg8j/awesome-dash - Curated list of awesome Dash (plotly) resources
-+ https://www.youtube.com/watch?v=wifoPPRgG_I - Webinar: Converting React components to Dash components
-
-
 See [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 ### Install dependencies
