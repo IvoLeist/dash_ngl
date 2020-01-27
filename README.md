@@ -9,7 +9,7 @@ https://github.com/plotly/dash-bio/issues/467
 
 Further existings solutions like https://github.com/lilyminium/dash-ngl
 do not (yet) support molecule selection via a dropdown
-+ they have for our purpose a way to complex code base to maintain.
+and they have for our purpose a way to complex code base to maintain.
 
 Therefore I have build a minimal dash_ngl viewer tailored to our neeeds.
 
