@@ -13,6 +13,10 @@ and they have for our purpose a way to complex code base to maintain.
 
 Therefore I have build a minimal dash [NGL](https://github.com/arose/ngl) viewer tailored to our neeeds.
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/IvoLeist/dash_ngl/master/static/demo-0.png">
+</p>
+
 ## Get started with:
 
 1. Install Dash and its dependencies: https://dash.plot.ly/installation
