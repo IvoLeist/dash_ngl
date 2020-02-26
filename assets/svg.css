@@ -1,0 +1,57 @@
+/* body {
+  background-color: lightblue;
+}
+
+.svg-container {
+ position: relative; 
+ height: 500px; 
+ width: 1404px !important; 
+ padding: 0;
+}
+
+.main-svg {
+ position: relative; 
+ height: 500px; 
+ width: 1404px !important; 
+ padding: 0;
+}
+
+.js-plotl-plot {
+ position: relative; 
+ height: 500px; 
+ width: 1404px !important; 
+ padding: 0;
+}
+
+.plot-container {
+ position: relative; 
+ height: 500px; 
+ width: 1404px !important; 
+ padding: 0;
+}
+
+
+rect.legendtoogle {
+    fill:rgb(0, 0, 255) !important; 
+    width: 200px !important;
+    transform: scale(30, 10) !important;
+}
+
+rect.nsewdrag {
+    fill:rgb(0, 0, 255) !important; 
+    width: 1404px !important; 
+    transform: scale(30, 10) !important;
+}
+
+g.subplot {
+    fill:rgb(0, 0, 255) !important; 
+    width: 1404px !important;
+    transform: scale(30, 10) !important; 
+}
+
+
+#dashbio-needleplot{
+    fill: yellow;
+    width:1404px !important
+} */
+
