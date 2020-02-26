@@ -110,45 +110,7 @@ export default class DashNgl extends Component {
     else{
       stageObj.addRepresentation("cartoon")
     }
-    // console.log(stageObj)
-    // console.log(stageObj.quaternion)
-    //stageObj.autoView()
-
-    //console.log(stage.getCenter(selection))
-
-    // let center = stageObj.getCenter()
-    // console.log(center)
-
-    // let zoom = stageObj.getZoom()
-    // console.log(zoom)
-
-    //stage.animationControls.zoomMove(center, zoom, 0)
-    //autoView = stage.animationControls.zoomMove(center, zoom, 0)
-    
-    // console.log(stage.getCenter())
-
-    //stage.autoView(1000)
-    //stage.centerView()
-
-
-    // let orientationMatrix = stage.viewerControls.getOrientation()
-    // console.log(orientationMatrix)
-
-    // let canvasPos = stage.viewerControls.getPositionOnCanvas(stageObj.getCenter())
-    // console.log(canvasPos)
-
-    //stageObj.setPosition(center)
-    
-    // let center2 = stageObj.getCenter()
-    // console.log(center2)
-    
-    // let canvasPos2 = stage.viewerControls.getPositionOnCanvas(stageObj.getCenter())
-    // console.log(canvasPos2)
-
-    //center.y = center.y
-    // console.log(center)
     stage.animationControls.moveComponent(stageObj,stageObj.getCenter(),1000)
-
     //stage.autoView()
   }
 
