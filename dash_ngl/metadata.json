@@ -1,6 +1,6 @@
 {
   "src/lib/components/DashNgl.react.js": {
-    "description": "Dash ngl component\nTHIS ONE GOES INTO a mount loop",
+    "description": "Dash ngl component",
     "displayName": "DashNgl",
     "methods": [
       {
@@ -123,7 +123,7 @@
         "required": false,
         "description": "CSS styling for viewport container",
         "defaultValue": {
-          "value": "{\n  width: '100%',\n  height: '500px',\n}",
+          "value": "{\r\n  width: '100%',\r\n  height: '500px',\r\n}",
           "computed": false
         }
       },
@@ -134,7 +134,7 @@
         "required": false,
         "description": "Parameters for the stage",
         "defaultValue": {
-          "value": "{\n    quality: 'medium',\n    backgroundColor: 'white'\n}",
+          "value": "{\r\n    quality: 'medium',\r\n    backgroundColor: 'white'\r\n}",
           "computed": false
         }
       },

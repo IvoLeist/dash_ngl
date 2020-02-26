@@ -4,7 +4,6 @@ import { Stage, Selection, PdbWriter } from 'ngl'; //https://github.com/arose/ng
 
 /**
  * Dash ngl component
- * THIS ONE GOES INTO a mount loop
  */
 export default class DashNgl extends Component {
 

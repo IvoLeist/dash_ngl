@@ -6,7 +6,6 @@ from dash.development.base_component import Component, _explicitize_args
 class DashNgl(Component):
     """A DashNgl component.
 Dash ngl component
-THIS ONE GOES INTO a mount loop
 
 Keyword arguments:
 - id (string; default 'viewport'): The ID used to identify this component in Dash callbacks.
