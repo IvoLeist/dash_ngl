@@ -18,16 +18,18 @@ Therefore I have build a dash [NGL](https://github.com/arose/ngl) viewer tailore
 - [x] Protein selection by dropdown
 - [x] Support for .pdb and .cif files
 - [x] Show multiple structures side by side
+- [x] Filter the structure to show only one chain (e.g. 6CHG.A)
 - [x] Changeable viewer background (black / white)
 - [x] Changeable camera settings ( perspective / orthographic)
 
 ## Limitations
 - So far only 2-3 structures at the same time are supported
+- A structure can only be filtered to one chain
 - Placement and zooming is far from perfect
 - zipped files are not (yet) supported
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/IvoLeist/dash_ngl/master/static/demo-1.png">
+  <img src="https://raw.githubusercontent.com/IvoLeist/dash_ngl/master/static/demo_0.png">
 </p>
 
 ## Get started with:
