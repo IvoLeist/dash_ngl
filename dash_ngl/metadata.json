@@ -123,7 +123,7 @@
         "required": false,
         "description": "CSS styling for viewport container",
         "defaultValue": {
-          "value": "{\r\n  width: '100%',\r\n  height: '500px',\r\n}",
+          "value": "{\r\n    width: '100%',\r\n    height: '500px',\r\n}",
           "computed": false
         }
       },
@@ -134,7 +134,7 @@
         "required": false,
         "description": "Parameters for the stage",
         "defaultValue": {
-          "value": "{\r\n    quality: 'medium',\r\n    backgroundColor: 'white'\r\n}",
+          "value": "{\r\n    quality: 'medium',\r\n    backgroundColor: 'white',\r\n}",
           "computed": false
         }
       },

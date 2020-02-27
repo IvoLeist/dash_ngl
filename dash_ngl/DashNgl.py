@@ -10,12 +10,12 @@ Dash ngl component
 Keyword arguments:
 - id (string; default 'viewport'): The ID used to identify this component in Dash callbacks.
 - viewportStyle (dict; default {
-  width: '100%',
-  height: '500px',
+    width: '100%',
+    height: '500px',
 }): CSS styling for viewport container
 - stageParameters (dict; default {
     quality: 'medium',
-    backgroundColor: 'white'
+    backgroundColor: 'white',
 }): Parameters for the stage
 - data (dict; optional): Custom property. data has the following type: list of dicts containing keys 'selectedValue', 'chain', 'color', 'filename', 'ext', 'config'.
 Those keys have the following types:
