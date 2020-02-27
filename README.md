@@ -16,7 +16,7 @@ Therefore I have build a dash [NGL](https://github.com/arose/ngl) viewer tailore
 ## Features
 
 - [x] Protein selection by dropdown
-- [x] Support for .pdbs and .cif files
+- [x] Support for .pdb and .cif files
 - [x] Show multiple structures side by side
 - [x] Changeable viewer background (black / white)
 - [x] Changeable camera settings ( perspective / orthographic)
@@ -24,6 +24,7 @@ Therefore I have build a dash [NGL](https://github.com/arose/ngl) viewer tailore
 ## Limitations
 - So far only 2-3 structures at the same time are supported
 - Placement and zooming is far from perfect
+- zipped files are not (yet) supported
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/IvoLeist/dash_ngl/master/static/demo-1.png">
