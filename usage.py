@@ -5,16 +5,9 @@ import dash_html_components as html
 import dash_core_components as dcc
 import dash_daq as daq
 
-import json
-import gzip
-
-styleSheets_path="/assets/"
-stylesheets = [
-                 styleSheets_path+"svg.css",
-               ]
+import glob
 
 app = dash.Dash(__name__)
-#app = dash.Dash(__name__, external_stylesheets=stylesheets)
 
 color_list=['#e41a1c','#377eb8','#4daf4a','#984ea3','#ff7f00',
             '#ffff33','#a65628','#f781bf','#999999']
@@ -30,21 +23,34 @@ data_dict={
                     }  
           }
 
-pdbs_list=['5L73','4GWM','3L9P','5L73.A_4GWM.A_3L9P.A',
-           '6CHG','3K8P','6CHG.A_3K8P.D'
-          ]
+dropdown_options=['1PNK',
+                  '5L73','4GWM','3L9P','5L73.A_4GWM.A_3L9P.A',
+                  '6CHG','6CHG.A','3K8P','6CHG.A_3K8P.D',
+                  '2MRU','1BNA','2MRU_1BNA',
+                 ]
 
-def getData(value,chain,color,filename):
+#custom functions
 
-    ext = filename.split('.')[-1]
-    with open(filename, 'r') as f:
+def getData(selection,pdb_id,color):
+
+    chain="ALL"
+
+    #check if only one chain should be displayed
+    if "." in pdb_id:
+        pdb_id,chain=pdb_id.split(".")
+
+    #get path to protein structure
+    fname = [f for f in glob.glob("data/"+pdb_id+".*")][0]
+    
+    ext = fname.split('.')[-1]
+    with open(fname, 'r') as f:
         contents = f.read()
 
     return {
-        'selectedValue':value,
+        'selectedValue':selection,
         'chain':chain,
         'color':color,
-        'filename': filename.split("/")[-1],
+        'filename': fname.split("/")[-1],
         'ext': ext,
         'config':{
             'type': 'text/plain',
@@ -84,7 +90,7 @@ viewer=html.Div([
 # ########################## ROOT LAYOUT ######################################
 rootLayout=html.Div([
     #header
-    html.Div(children=[html.H1("PStruc")],
+    html.Div(children=[html.H1("NGL Protein Structure Viewer")],
              style = {'backgroundColor' : '#3aaab2','height':'7vh'}
              ),
 
@@ -106,7 +112,7 @@ rootLayout=html.Div([
                 dcc.Dropdown(
                     id='pdb-dropdown',
                     clearable=False,
-                    options=[{'label': k, 'value': k } for k in pdbs_list],
+                    options=[{'label': k, 'value': k } for k in dropdown_options],
                     placeholder='Select a molecule',
                 )],
                 style={'width': '100%', 'display': 'inline-block'}
@@ -140,28 +146,23 @@ app.layout = html.Div(id='dark-theme-container',children=[
 @app.callback(Output('viewport', 'data'),
               [Input('pdb-dropdown', 'value')]
              )
-def display_output(uniprot_id):
+def display_output(selection):
     
-    print(uniprot_id) 
-    color='#e41a1c'
-    chain='ALL'
-    data_list=[]
+    data=[]
+    print (selection)
 
-    if uniprot_id==None:
-        data_list.append(data_dict)
+    if selection==None:
+        data.append(data_dict)
     else:
-        pdb_id = uniprot_id
-        if "_" in pdb_id:
-            for i,e in enumerate(pdb_id.split("_")):
-                pdb_id,chain=e.split(".")
-                data_list.append(getData(pdb_id,chain,color_list[i],"data/"+pdb_id+".pdb"))
+        if "_" in selection:
+            for i,pdb_id in enumerate(selection.split("_")):
+                data.append(getData(selection,pdb_id,color_list[i]))
         else:
-            if "." in pdb_id:
-                pdb_id,chain=uniprot_id.split(".")
-            data_list.append(getData(pdb_id,chain,color,"data/"+pdb_id+".pdb"))
+            pdb_id=selection
+            data.append(getData(selection,pdb_id,color_list[0]))
+    
+    return data
 
-    return data_list
-        
 #CB stage
 @app.callback(Output('viewport', 'stageParameters'),
               [Input('stage-bg-color', 'value'),

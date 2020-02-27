@@ -11,10 +11,22 @@ Further existings solutions like https://github.com/lilyminium/dash-ngl
 do not (yet) support molecule selection via a dropdown
 and they have for our purpose a way to complex code base to maintain.
 
-Therefore I have build a minimal dash [NGL](https://github.com/arose/ngl) viewer tailored to our neeeds.
+Therefore I have build a dash [NGL](https://github.com/arose/ngl) viewer tailored to our neeeds.
+
+## Features
+
+- [x] Protein selection by dropdown
+- [x] Support for .pdbs and .cif files
+- [x] Show multiple structures side by side
+- [x] Changeable viewer background (black / white)
+- [x] Changeable camera settings ( perspective / orthographic)
+
+## Limitations
+- So far only 2-3 structures at the same time are supported
+- Placement and zooming is far from perfect
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/IvoLeist/dash_ngl/master/static/demo-0.png">
+  <img src="https://raw.githubusercontent.com/IvoLeist/dash_ngl/master/static/demo-1.png">
 </p>
 
 ## Get started with:
