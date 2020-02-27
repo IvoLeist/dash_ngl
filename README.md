@@ -22,15 +22,15 @@ Therefore I have build a dash [NGL](https://github.com/arose/ngl) viewer tailore
 - [x] Changeable viewer background (black / white)
 - [x] Changeable camera settings ( perspective / orthographic)
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/IvoLeist/dash_ngl/master/static/demo_0.png">
+</p>
+
 ## Limitations
 - So far only 2-3 structures at the same time are supported
 - A structure can only be filtered to one chain
 - Placement and zooming is far from perfect
 - zipped files are not (yet) supported
-
-<p align="center">
-  <img src="https://raw.githubusercontent.com/IvoLeist/dash_ngl/master/static/demo_0.png">
-</p>
 
 ## Get started with:
 
