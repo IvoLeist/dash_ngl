@@ -34,6 +34,8 @@ dropdown_options = [
     "3K8P",
     "2MRU",
     "1BNA",
+    "6NZK",
+    "6OHW"
 ]
 
 # Placeholder which is loaded if no molecule is selected
@@ -145,6 +147,15 @@ rootLayout = html.Div(
                                     ],
                                     value="white",
                                 ),
+                                html.Div(["Render quality"]),
+                                dcc.Dropdown(
+                                    id="stage-render-quality",
+                                    options=[
+                                        {"label": c, "value": c.lower()}
+                                        for c in ['auto', 'low', 'medium', 'high']
+                                    ],
+                                    value="auto",
+                                ),
                             ],
                         )
                     ],
@@ -230,13 +241,14 @@ def display_output(selection, n_clicks, value):
 @app.callback(
     Output(component_id, "stageParameters"),
     [Input("stage-bg-color", "value"),
-     Input("stage-camera-type", "value")],
+     Input("stage-camera-type", "value"),
+     Input("stage-render-quality", "value")]
 )
-def update_stage(bgcolor, camera_type):
+def update_stage(bgcolor, camera_type, quality):
     return {
         "backgroundColor": bgcolor,
         "cameraType": camera_type,
-        "quality": "medium",
+        "quality": quality,
     }
 
 
