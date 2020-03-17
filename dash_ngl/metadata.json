@@ -129,11 +129,7 @@
         "required": false,
         "description": "The height and the width (in px) of the container\nin which the molecules will be displayed.\nIt should be in JSON format.",
         "defaultValue": {
-<<<<<<< HEAD
-          "value": "{\r\n    width: '100%',\r\n    height: '500px',\r\n}",
-=======
           "value": "{\n  width: '500px',\n  height: '500px'\n}",
->>>>>>> multipleProteins
           "computed": false
         }
       },
@@ -158,11 +154,7 @@
         "required": false,
         "description": "Parameters (in JSON format) for the stage object of ngl.\nCurrently implemented are the quality of the visualisation\nand the background colorFor a full list see:\nhttp://nglviewer.org/ngl/api/file/src/stage/stage.js.html",
         "defaultValue": {
-<<<<<<< HEAD
-          "value": "{\r\n    quality: 'medium',\r\n    backgroundColor: 'white',\r\n}",
-=======
           "value": "{\n  quality: 'medium',\n  backgroundColor: 'white',\n  cameraType: 'perspective'\n}",
->>>>>>> multipleProteins
           "computed": false
         }
       },

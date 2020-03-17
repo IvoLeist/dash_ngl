@@ -14,22 +14,11 @@ Keyword arguments:
 - id (string; optional): The ID of this component, used to identify dash components in callbacks.
 The ID needs to be unique across all of the components in an app.
 - viewportStyle (dict; default {
-<<<<<<< HEAD
-    width: '100%',
-    height: '500px',
-}): CSS styling for viewport container
-- stageParameters (dict; default {
-    quality: 'medium',
-    backgroundColor: 'white',
-}): Parameters for the stage
-- data (dict; optional): Custom property. data has the following type: list of dicts containing keys 'selectedValue', 'chain', 'color', 'filename', 'ext', 'config'.
-=======
   width: '500px',
   height: '500px'
 }): The height and the width (in px) of the container
 in which the molecules will be displayed.
 It should be in JSON format. viewportStyle has the following type: dict containing keys 'width', 'height'.
->>>>>>> multipleProteins
 Those keys have the following types:
   - width (string; optional)
   - height (string; optional)
