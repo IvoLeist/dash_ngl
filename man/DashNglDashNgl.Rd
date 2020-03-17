@@ -6,19 +6,38 @@
 \title{DashNgl component}
 
 \description{
-Dash ngl component THIS ONE GOES INTO a mount loop
+The NglMoleculeViewer is used to render schematic diagrams of biomolecules in ribbon-structure representations. Read more about the used WebGL protein viewer here: https://github.com/arose/ngl
 }
 
 \usage{
-DashNglDashNgl(id=NULL, viewportStyle=NULL, stageParameters=NULL, data=NULL)
+DashNglDashNgl(id=NULL, viewportStyle=NULL, stageParameters=NULL, pdbString=NULL, data=NULL)
 }
 
 \arguments{
-\item{id}{Character. The ID used to identify this component in Dash callbacks.}
+\item{id}{Character. The ID of this component, used to identify dash components in callbacks.
+The ID needs to be unique across all of the components in an app.}
 
-\item{viewportStyle}{Named list. CSS styling for viewport container}
+\item{viewportStyle}{Lists containing elements 'width', 'height'.
+those elements have the following types:
+  - width (character; optional)
+  - height (character; optional). The height and the width (in px) of the container
+in which the molecules will be displayed.
+It should be in JSON format.}
 
-\item{stageParameters}{Named list. Parameters for the stage}
+\item{stageParameters}{Lists containing elements 'quality', 'backgroundcolor', 'cameratype'.
+those elements have the following types:
+  - quality (character; optional)
+  - backgroundcolor (character; optional)
+  - cameratype (character; optional). Parameters (in JSON format) for the stage object of ngl.
+Currently implemented are the quality of the visualisation
+and the background colorFor a full list see:
+http://nglviewer.org/ngl/api/file/src/stage/stage.js.html}
+
+\item{pdbString}{Character. Variable which defines how many molecules should be shown and/or which chain
+The following format needs to be used:
+pdbID1.chain_pdbID2.chain
+. indicates that only one chain should be shown
+ _ indicates that more than one protein should be shown}
 
 \item{data}{List of lists containing elements 'selectedvalue', 'chain', 'color', 'filename', 'ext', 'config'.
 those elements have the following types:
@@ -30,15 +49,11 @@ those elements have the following types:
   - config (optional): . config has the following type: lists containing elements 'type', 'input'.
 those elements have the following types:
   - type (character; required)
-  - input (unnamed list | named list | character; optional)s | lists containing elements 'selectedvalue', 'chain', 'color', 'filename', 'ext', 'config'.
-those elements have the following types:
-  - selectedvalue (character; required)
-  - chain (character; required)
-  - color (character; required)
-  - filename (character; required)
-  - ext (character; optional)
-  - config (optional): . config has the following type: lists containing elements 'type', 'input'.
-those elements have the following types:
-  - type (character; required)
-  - input (unnamed list | named list | character; optional). Custom property}
+  - input (character; required)s. The data (in JSON format) that will be used to display the molecule
+selectedValue: pdbString
+color: color in hex format
+filename: name of the used pdb/cif file
+ext: file extensions (pdb or cif)
+config.input: content of the pdb file
+config.type: format of config.input}
 }
