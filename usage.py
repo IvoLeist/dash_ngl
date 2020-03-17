@@ -1,14 +1,15 @@
+import glob
+
 import dash_ngl
 import dash
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import dash_html_components as html
 import dash_core_components as dcc
 import dash_daq as daq
 
-import glob
-
 app = dash.Dash(__name__)
 
+# Preset colors for the shown molecules
 color_list = [
     "#e41a1c",
     "#377eb8",
@@ -21,6 +22,21 @@ color_list = [
     "#999999",
 ]
 
+# PDB examples
+# . indicates that only one chain should be shown
+# _ indicates that more than one protein should be shown
+dropdown_options = [
+    "1PNK",
+    "5L73",
+    "4GWM",
+    "3L9P",
+    "6CHG",
+    "3K8P",
+    "2MRU",
+    "1BNA",
+]
+
+# Placeholder which is loaded if no molecule is selected
 data_dict = {
     "selectedValue": "placeholder",
     "chain": "ALL",
@@ -30,45 +46,23 @@ data_dict = {
     "config": {"type": "", "input": ""},
 }
 
-dropdown_options = [
-    "1PNK",
-    "5L73",
-    "4GWM",
-    "3L9P",
-    "5L73.A_4GWM.A_3L9P.A",
-    "6CHG",
-    "6CHG.A",
-    "3K8P",
-    "6CHG.A_3K8P.D",
-    "2MRU",
-    "1BNA",
-    "2MRU_1BNA",
-]
 
-# custom functions
-def getData(selection, pdb_id, color):
-
-    chain = "ALL"
-
-    # check if only one chain should be displayed
-    if "." in pdb_id:
-        pdb_id, chain = pdb_id.split(".")
-
-    # get path to protein structure
-    fname = [f for f in glob.glob("data/" + pdb_id + ".*")][0]
-
-    ext = fname.split(".")[-1]
-    with open(fname, "r") as f:
-        contents = f.read()
-
-    return {
-        "selectedValue": selection,
-        "chain": chain,
-        "color": color,
-        "filename": fname.split("/")[-1],
-        "ext": ext,
-        "config": {"type": "text/plain", "input": contents},
-    }
+# Canvas container to display the structures
+component_id = "viewport"
+viewer = html.Div(
+    id="ngl-viewer-stage",
+    children=[dash_ngl.DashNgl(
+        id=component_id,
+        data=[data_dict]
+        )],
+    style={
+        "display": "inline-block",
+        "width": "calc(100% - 500px)",
+        "float": "left",
+        "marginTop": "50px",
+        "marginRight": "50px",
+    },
+)
 
 
 ###Define app layout
@@ -84,29 +78,16 @@ theme = {
     "secondary": "#6E6E6E",
 }
 
-##NGL viewer
-viewer = html.Div(
-    [dash_ngl.DashNgl(id="viewport", data=data_dict)],
-    style={
-        "display": "inline-block",
-        "width": "calc(100% - 500px)",
-        "float": "left",
-        "marginTop": "50px",
-        "marginRight": "50px",
-    },
-)
 
-# ########################## ROOT LAYOUT ######################################
+# ROOT LAYOUT
 rootLayout = html.Div(
     [
         # header
         html.Div(
-            children=[html.H1("NGL Protein Structure Viewer")],
+            children=[html.H1("PStruc")],
             style={"backgroundColor": "#3aaab2", "height": "7vh"},
         ),
-        viewer,
-        # if you use dcc.Loading viewer the app goes into a mount loop!
-        # dcc.Loading(viewer),
+        dcc.Loading(viewer),
         dcc.Tabs(
             id="tabs",
             children=[
@@ -129,7 +110,12 @@ rootLayout = html.Div(
                                         for k in dropdown_options
                                     ],
                                     placeholder="Select a molecule",
-                                )
+                                ),
+                                dcc.Input(
+                                    id="pdb-string",
+                                    placeholder="pdbID1.chain_pdbID2.chain",
+                                ),
+                                html.Button("Submit", id="button"),
                             ],
                             style={"width": "100%", "display": "inline-block"},
                         ),
@@ -168,46 +154,89 @@ rootLayout = html.Div(
     ]
 )
 
-# ################################# APP LAYOUT ################################
+# APP LAYOUT
 app.layout = html.Div(
     id="dark-theme-container",
     children=[
         html.Div(
             id="dark-theme-components",
-            children=[daq.DarkThemeProvider(theme=theme, children=rootLayout)],
+            children=[daq.DarkThemeProvider(
+                theme=theme,
+                children=rootLayout)],
         )
     ],
 )
 
-##CB viewport
-@app.callback(Output("viewport", "data"), [Input("pdb-dropdown", "value")])
-def display_output(selection):
+# Helper function to load the data
+def getData(selection, pdb_id, color):
 
-    data = []
-    print(selection)
+    chain = "ALL"
 
-    if selection == None:
-        data.append(data_dict)
+    # Check if only one chain should be shown
+    if "." in pdb_id:
+        pdb_id, chain = pdb_id.split(".")
+
+    if pdb_id not in dropdown_options:
+        return data_dict
     else:
-        if "_" in selection:
-            for i, pdb_id in enumerate(selection.split("_")):
-                data.append(getData(selection, pdb_id, color_list[i]))
-        else:
-            pdb_id = selection
-            data.append(getData(selection, pdb_id, color_list[0]))
+        # get path to protein structure
+        fname = [f for f in glob.glob("data/" + pdb_id + ".*")][0]
 
+        with open(fname, "r") as f:
+            contents = f.read()
+
+        return {
+            "selectedValue": selection,
+            "chain": chain,
+            "color": color,
+            "filename": fname.split("/")[-1],
+            "ext": fname.split(".")[-1],
+            "config": {"type": "text/plain", "input": contents},
+        }
+
+
+##CB viewport
+@app.callback(
+    Output(component_id, "data"),
+    [Input("pdb-dropdown", "value"),
+     Input("button", "n_clicks")],
+    [State("pdb-string", "value")],
+)
+def display_output(selection, n_clicks, value):
+    data = []
+    print(selection, n_clicks, value)
+
+    if selection is None and value is None:
+        data.append(data_dict)
+
+    if selection is not None and value is None:
+        pdb_id = selection
+        data.append(getData(selection, pdb_id, color_list[0]))
+
+    elif value is not None and n_clicks > 0:
+        if len(value) > 4:
+            pdb_id = value
+            if "_" in value:
+                for i, pdb_id in enumerate(value.split("_")):
+                    data.append(getData(value, pdb_id, color_list[i]))
+            else:
+                data.append(getData(value, pdb_id, color_list[0]))
+        else:
+            data.append(data_dict)
     return data
 
 
 # CB stage
 @app.callback(
-    Output("viewport", "stageParameters"),
-    [Input("stage-bg-color", "value"), Input("stage-camera-type", "value")],
+    Output(component_id, "stageParameters"),
+    [Input("stage-bg-color", "value"),
+     Input("stage-camera-type", "value")],
 )
 def update_stage(bgcolor, camera_type):
     return {
         "backgroundColor": bgcolor,
         "cameraType": camera_type,
+        "quality": "medium",
     }
 
 
