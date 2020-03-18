@@ -127,9 +127,9 @@
           }
         },
         "required": false,
-        "description": "The height and the width (in px) of the container\nin which the molecules will be displayed.\nIt should be in JSON format.",
+        "description": "The height and the width (in px) of the container\nin which the molecules will be displayed.\nDefault: width:1000px / height:500px\nIt should be in JSON format.",
         "defaultValue": {
-          "value": "{\n  width: '500px',\n  height: '500px'\n}",
+          "value": "{\n  width: '500x',\n  height: '500px'\n}",
           "computed": false
         }
       },

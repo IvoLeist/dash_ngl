@@ -50,7 +50,7 @@ data_dict = {
 
 
 # Canvas container to display the structures
-component_id = "viewport"
+component_id = "nglViewer"
 viewer = html.Div(
     id="ngl-viewer-stage",
     children=[dash_ngl.DashNgl(
@@ -60,12 +60,13 @@ viewer = html.Div(
     style={
         "display": "inline-block",
         "width": "calc(100% - 500px)",
-        "float": "left",
+        "float":"left",
         "marginTop": "50px",
         "marginRight": "50px",
     },
 )
 
+#"width": "calc(100% - 500px)",
 
 ###Define app layout
 label_width = 4
@@ -89,7 +90,9 @@ rootLayout = html.Div(
             children=[html.H1("PStruc")],
             style={"backgroundColor": "#3aaab2", "height": "7vh"},
         ),
-        dcc.Loading(viewer),
+        viewer,
+        # using dcc.Loading leads to remounting with every selection change
+        #dcc.Loading(viewer),
         dcc.Tabs(
             id="tabs",
             children=[

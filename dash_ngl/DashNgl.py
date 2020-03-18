@@ -14,10 +14,11 @@ Keyword arguments:
 - id (string; optional): The ID of this component, used to identify dash components in callbacks.
 The ID needs to be unique across all of the components in an app.
 - viewportStyle (dict; default {
-  width: '500px',
+  width: '500x',
   height: '500px'
 }): The height and the width (in px) of the container
 in which the molecules will be displayed.
+Default: width:1000px / height:500px
 It should be in JSON format. viewportStyle has the following type: dict containing keys 'width', 'height'.
 Those keys have the following types:
   - width (string; optional)

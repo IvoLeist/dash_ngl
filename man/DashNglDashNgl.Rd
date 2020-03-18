@@ -22,6 +22,7 @@ those elements have the following types:
   - width (character; optional)
   - height (character; optional). The height and the width (in px) of the container
 in which the molecules will be displayed.
+Default: width:1000px / height:500px
 It should be in JSON format.}
 
 \item{stageParameters}{Lists containing elements 'quality', 'backgroundcolor', 'cameratype'.

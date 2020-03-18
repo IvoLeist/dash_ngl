@@ -38,7 +38,7 @@ export default class DashNgl extends Component {
       console.log({ prevProps, nextProps })
 
       // wait for the first pdb selection after startup
-      if (nextProps.data === undefined) {
+      if (nextProps.data !== undefined) {
         console.log('first pdb selection')
         return true
       }
@@ -51,7 +51,7 @@ export default class DashNgl extends Component {
         console.log('pdb selection has changed')
         return true
       }
-    }
+    } 
 
     // check for stage params changed
     const oldStage = prevProps.stageParameters
@@ -80,7 +80,6 @@ export default class DashNgl extends Component {
       console.log('stage params changed')
       return true
     }
-    // no update since neither the data nor the stage paramas have changed
     return false
   }
 
@@ -235,7 +234,7 @@ export default class DashNgl extends Component {
 }
 
 const defaultViewportStyle = {
-  width: '500px',
+  width: '500x',
   height: '500px'
 }
 
@@ -275,6 +274,7 @@ DashNgl.propTypes = {
   /**
    * The height and the width (in px) of the container
    * in which the molecules will be displayed.
+   * Default: width:1000px / height:500px
    * It should be in JSON format.
   */
   viewportStyle: PropTypes.exact({
