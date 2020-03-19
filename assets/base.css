@@ -32,6 +32,11 @@
     z-index: 1002;
 }*/
 
+/* Remove Undo Button
+--------------------------------------------------*/
+._dash-undo-redo {
+    display: none;
+  }
 
 /* Grid
 –––––––––––––––––––––––––––––––––––––––––––––––––– */
@@ -132,7 +137,9 @@ body {
   line-height: 1.6;
   font-weight: 400;
   font-family: "Open Sans", "HelveticaNeue", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  color: rgb(50, 50, 50); }
+  color: rgb(50, 50, 50); 
+  margin: 0!important;
+  }
 
 
 /* Typography
@@ -320,16 +327,16 @@ li {
 table {
   border-collapse: collapse;
 }
-th:not(.CalendarDay),
-td:not(.CalendarDay) {
+th,
+td {
   padding: 12px 15px;
   text-align: left;
   border-bottom: 1px solid #E1E1E1; }
-th:first-child:not(.CalendarDay),
-td:first-child:not(.CalendarDay) {
+th:first-child,
+td:first-child {
   padding-left: 0; }
-th:last-child:not(.CalendarDay),
-td:last-child:not(.CalendarDay) {
+th:last-child,
+td:last-child {
   padding-right: 0; }
 
 

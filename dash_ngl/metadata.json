@@ -171,6 +171,10 @@
           "value": {
             "name": "exact",
             "value": {
+              "uploaded": {
+                "name": "bool",
+                "required": true
+              },
               "selectedValue": {
                 "name": "string",
                 "required": true
@@ -211,7 +215,7 @@
         "required": false,
         "description": "The data (in JSON format) that will be used to display the molecule\nselectedValue: pdbString\ncolor: color in hex format\nfilename: name of the used pdb/cif file\next: file extensions (pdb or cif)\nconfig.input: content of the pdb file\nconfig.type: format of config.input",
         "defaultValue": {
-          "value": "[{\n  selectedValue: 'placeholder',\n  chain: 'ALL',\n  color: 'red',\n  filename: 'placeholder',\n  ext: '',\n  config: {\n    type: 'text/plain',\n    input: ''\n  }\n}]",
+          "value": "[{\n  uploaded: true,\n  selectedValue: 'placeholder',\n  chain: 'ALL',\n  color: 'red',\n  filename: 'placeholder',\n  ext: '',\n  config: {\n    type: 'text/plain',\n    input: ''\n  }\n}]",
           "computed": false
         }
       }

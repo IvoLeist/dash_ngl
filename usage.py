@@ -1,3 +1,4 @@
+import base64
 import glob
 
 import dash_ngl
@@ -5,9 +6,10 @@ import dash
 from dash.dependencies import Input, Output, State
 import dash_html_components as html
 import dash_core_components as dcc
-import dash_daq as daq
 
 app = dash.Dash(__name__)
+app.css.config.serve_locally = True
+
 
 # Preset colors for the shown molecules
 color_list = [
@@ -35,11 +37,12 @@ dropdown_options = [
     "2MRU",
     "1BNA",
     "6NZK",
-    "6OHW"
+    "6OHW",
 ]
 
 # Placeholder which is loaded if no molecule is selected
 data_dict = {
+    "uploaded": False,
     "selectedValue": "placeholder",
     "chain": "ALL",
     "color": "#e41a1c",
@@ -52,134 +55,174 @@ data_dict = {
 # Canvas container to display the structures
 component_id = "nglViewer"
 viewer = html.Div(
-    id="ngl-viewer-stage",
-    children=[dash_ngl.DashNgl(
-        id=component_id,
-        data=[data_dict]
-        )],
-    style={
-        "display": "inline-block",
-        "width": "calc(100% - 500px)",
-        "float":"left",
-        "marginTop": "50px",
-        "marginRight": "50px",
-    },
+    id="ngl-biomolecule-viewer",
+    children=[dash_ngl.DashNgl(id=component_id, data=[data_dict])],
 )
 
-#"width": "calc(100% - 500px)",
+about_html = [
+    html.H4(className="what-is", children="What is Ngl Molecule Viewer?",),
+    html.P(
+        "Ngl Molecule Viewer is a visualizer that allows you"
+        "to view biomolecules in multiple representations:"
+        "sticks, spheres, and cartoons."
+    ),
+    html.P(
+        "You can select a preloaded structure, or upload your own,"
+        'in the "Data" tab. A sample structure is also'
+        "available to download."
+    ),
+    html.P("Additionally you can show multiple structures and/or " "specify a chain"),
+    html.P(
+        'In the "View" tab, you can change the style and'
+        "coloring of the various components of your molecule."
+    ),
+]
 
-###Define app layout
-label_width = 4
-col_width = 8
+data_tab = [
+    html.Div(className="app-controls-name", children="Select structure",),
+    dcc.Dropdown(
+        id="pdb-dropdown",
+        clearable=False,
+        options=[{"label": k, "value": k} for k in dropdown_options],
+        value="1BNA",
+    ),
+    html.Div(
+        className="app-controls-name",
+        children="Show multiple structures & specify a chain",
+    ),
+    dcc.Input(id="pdb-string", placeholder="pdbID1.chain_pdbID2.chain",),
+    html.Button("Submit", id="button"),
+    html.Div(
+        title="Upload biomolecule to view here",
+        className="app-controls-block",
+        id="ngl-upload-container",
+        children=[
+            dcc.Upload(
+                id="ngl-upload-data",
+                className="control-upload",
+                children=html.Div(["Drag and drop or click to upload a file.",]),
+                # Allow multiple files to be uploaded
+                multiple=True,
+            ),
+        ],
+    ),
+    html.Div(id="ngl-data-info"),
+]
 
-styles = {"tab": {"height": "calc(98vh - 115px)"}}
+view_tab = [
+    html.Div(
+        title="select background color",
+        className="app-controls-block",
+        id="ngl-style-color",
+        children=[
+            html.P(
+                "Background color",
+                style={"font-weight": "bold", "margin-bottom": "10px",},
+            ),
+            dcc.Dropdown(
+                id="stage-bg-color",
+                options=[
+                    {"label": c, "value": c.lower(),} for c in ["black", "white",]
+                ],
+                value="white",
+            ),
+        ],
+    ),
+    html.Div(
+        title="Camera settings",
+        className="app-controls-block",
+        id="ngl-selection-display",
+        children=[
+            html.P(
+                "Camera settings",
+                style={"font-weight": "bold", "margin-bottom": "10px",},
+            ),
+            dcc.Dropdown(
+                id="stage-camera-type",
+                options=[
+                    {"label": k.capitalize(), "value": k,}
+                    for k in ["perspective", "orthographic",]
+                ],
+                value="perspective",
+            ),
+        ],
+    ),
+    html.Div(
+        title="select render quality",
+        className="app-controls-block",
+        id="ngl-style",
+        children=[
+            html.P(
+                "Render quality",
+                style={"font-weight": "bold", "margin-bottom": "10px",},
+            ),
+            dcc.Dropdown(
+                id="stage-render-quality",
+                options=[
+                    {"label": c, "value": c.lower(),}
+                    for c in ["auto", "low", "medium", "high",]
+                ],
+                value="auto",
+            ),
+        ],
+    ),
+]
 
-theme = {
-    "dark": True,
-    "detail": "#007439",
-    "primary": "#00EA64",
-    "secondary": "#6E6E6E",
-}
-
-
-# ROOT LAYOUT
-rootLayout = html.Div(
-    [
-        # header
-        html.Div(
-            children=[html.H1("PStruc")],
-            style={"backgroundColor": "#3aaab2", "height": "7vh"},
-        ),
-        viewer,
-        # using dcc.Loading leads to remounting with every selection change
-        #dcc.Loading(viewer),
+tabs = html.Div(
+    id="ngl-control-tabs",
+    className="control-tabs",
+    children=[
         dcc.Tabs(
-            id="tabs",
+            id="ngl-tabs",
+            value="what-is",
             children=[
                 dcc.Tab(
+                    label="About",
+                    value="what-is",
+                    children=html.Div(className="control-tab", children=about_html),
+                ),
+                dcc.Tab(
                     label="Data",
-                    children=[
-                        # daq.ToggleSwitch(
-                        #     id='toggle-theme',
-                        #     label=['Light', 'Dark'],
-                        #     style={'width': '250px', 'margin': 'auto'},
-                        #     value=False
-                        # ),
-                        html.Div(
-                            [
-                                dcc.Dropdown(
-                                    id="pdb-dropdown",
-                                    clearable=False,
-                                    options=[
-                                        {"label": k, "value": k}
-                                        for k in dropdown_options
-                                    ],
-                                    placeholder="Select a molecule",
-                                ),
-                                dcc.Input(
-                                    id="pdb-string",
-                                    placeholder="pdbID1.chain_pdbID2.chain",
-                                ),
-                                html.Button("Submit", id="button"),
-                            ],
-                            style={"width": "100%", "display": "inline-block"},
-                        ),
-                    ],
+                    value="upload-select",
+                    children=html.Div(className="control-tab", children=data_tab),
                 ),
                 dcc.Tab(
                     label="View",
+                    value="view-options",
+                    children=[html.Div(className="control-tab", children=view_tab)],
+                ),
+            ],
+        ),
+    ],
+)
+
+# LAYOUT
+app.layout = html.Div(
+    id="main-page",
+    children=[
+        html.Div(
+            id="app-page-header",
+            children=[html.H1("Ngl Molecule Viewer")],
+            style={"background": "#e7625f", "color": "white"},
+        ),
+        html.Div(
+            id="app-page-content",
+            children=[
+                html.Div(
+                    id="ngl-body",
+                    className="app-body",
                     children=[
-                        html.Div(
-                            style=styles["tab"],
-                            children=[
-                                html.Div(["Camera settings"]),
-                                dcc.Dropdown(
-                                    id="stage-camera-type",
-                                    options=[
-                                        {"label": k.capitalize(), "value": k}
-                                        for k in ["perspective", "orthographic"]
-                                    ],
-                                    value="perspective",
-                                ),
-                                html.Div(["Background"]),
-                                dcc.Dropdown(
-                                    id="stage-bg-color",
-                                    options=[
-                                        {"label": c, "value": c.lower()}
-                                        for c in ["black", "white"]
-                                    ],
-                                    value="white",
-                                ),
-                                html.Div(["Render quality"]),
-                                dcc.Dropdown(
-                                    id="stage-render-quality",
-                                    options=[
-                                        {"label": c, "value": c.lower()}
-                                        for c in ['auto', 'low', 'medium', 'high']
-                                    ],
-                                    value="auto",
-                                ),
-                            ],
-                        )
+                        tabs,
+                        viewer,
+                        # using dcc.Loading leads to remounting with every selection change
+                        # dcc.Loading(viewer),
                     ],
                 ),
             ],
         ),
-    ]
-)
-
-# APP LAYOUT
-app.layout = html.Div(
-    id="dark-theme-container",
-    children=[
-        html.Div(
-            id="dark-theme-components",
-            children=[daq.DarkThemeProvider(
-                theme=theme,
-                children=rootLayout)],
-        )
     ],
 )
+
 
 # Helper function to load the data
 def getData(selection, pdb_id, color):
@@ -200,6 +243,7 @@ def getData(selection, pdb_id, color):
             contents = f.read()
 
         return {
+            "uploaded": False,
             "selectedValue": selection,
             "chain": chain,
             "color": color,
@@ -209,25 +253,28 @@ def getData(selection, pdb_id, color):
         }
 
 
-##CB viewport
+# CB viewport
 @app.callback(
     Output(component_id, "data"),
-    [Input("pdb-dropdown", "value"),
-     Input("button", "n_clicks")],
+    [
+        Input("pdb-dropdown", "value"),
+        Input("ngl-upload-data", "contents"),
+        Input("button", "n_clicks"),
+    ],
     [State("pdb-string", "value")],
 )
-def display_output(selection, n_clicks, value):
+def display_output(selection, upload_content, n_clicks, value):
     data = []
     print(selection, n_clicks, value)
 
-    if selection is None and value is None:
+    if selection is None and value is None and upload_content is None:
         data.append(data_dict)
 
-    if selection is not None and value is None:
+    if selection is not None and value is None and upload_content is None:
         pdb_id = selection
         data.append(getData(selection, pdb_id, color_list[0]))
 
-    elif value is not None and n_clicks > 0:
+    if value is not None and n_clicks > 0:
         if len(value) > 4:
             pdb_id = value
             if "_" in value:
@@ -237,15 +284,37 @@ def display_output(selection, n_clicks, value):
                 data.append(getData(value, pdb_id, color_list[0]))
         else:
             data.append(data_dict)
+
+    if upload_content is not None:
+        data = []
+        print("upload not None")
+        content_type, content_string = str(upload_content).split(",")
+        decoded_contents = base64.b64decode(content_string).decode("UTF-8")
+        pdb_id = decoded_contents.split("\n")[0].split()[-1]
+        print(pdb_id)
+
+        data.append(
+            {
+                "uploaded": True,
+                "selectedValue": pdb_id,
+                "chain": "ALL",
+                "color": color_list[0],
+                "filename": pdb_id + ".pdb",
+                "ext": "pdb",
+                "config": {"type": "text/plain", "input": decoded_contents},
+            }
+        )
     return data
 
 
 # CB stage
 @app.callback(
     Output(component_id, "stageParameters"),
-    [Input("stage-bg-color", "value"),
-     Input("stage-camera-type", "value"),
-     Input("stage-render-quality", "value")]
+    [
+        Input("stage-bg-color", "value"),
+        Input("stage-camera-type", "value"),
+        Input("stage-render-quality", "value"),
+    ],
 )
 def update_stage(bgcolor, camera_type, quality):
     return {

@@ -51,6 +51,13 @@ export default class DashNgl extends Component {
         console.log('pdb selection has changed')
         return true
       }
+
+      console.log(data)
+      // check if structure has been uploaded
+      if (data[0].uploaded === true){
+        console.log('data has been uploaded')
+        return true
+      }
     } 
 
     // check for stage params changed
@@ -245,6 +252,7 @@ const defaultStageParameters = {
 }
 
 const defaultData = [{
+  uploaded: true,
   selectedValue: 'placeholder',
   chain: 'ALL',
   color: 'red',
@@ -314,6 +322,7 @@ DashNgl.propTypes = {
    */
   data: PropTypes.arrayOf(
     PropTypes.exact({
+      uploaded: PropTypes.bool.isRequired,
       selectedValue: PropTypes.string.isRequired,
       chain: PropTypes.string.isRequired,
       color: PropTypes.string.isRequired,

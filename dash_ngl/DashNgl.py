@@ -41,6 +41,7 @@ pdbID1.chain_pdbID2.chain
 . indicates that only one chain should be shown
  _ indicates that more than one protein should be shown
 - data (dict; default [{
+  uploaded: true,
   selectedValue: 'placeholder',
   chain: 'ALL',
   color: 'red',
@@ -56,8 +57,9 @@ color: color in hex format
 filename: name of the used pdb/cif file
 ext: file extensions (pdb or cif)
 config.input: content of the pdb file
-config.type: format of config.input. data has the following type: list of dicts containing keys 'selectedValue', 'chain', 'color', 'filename', 'ext', 'config'.
+config.type: format of config.input. data has the following type: list of dicts containing keys 'uploaded', 'selectedValue', 'chain', 'color', 'filename', 'ext', 'config'.
 Those keys have the following types:
+  - uploaded (boolean; required)
   - selectedValue (string; required)
   - chain (string; required)
   - color (string; required)
