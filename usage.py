@@ -102,10 +102,13 @@ data_tab = [
             dcc.Upload(
                 id="ngl-upload-data",
                 className="control-upload",
-                children=html.Div(["Drag and drop or click to upload (multiple) pdb/cif file(s).",]),
+                children=html.Div(
+                    ["Drag and drop or click to upload (multiple) pdb/cif file(s).",]
+                ),
                 # Allow multiple files to be uploaded
                 multiple=True,
             ),
+            html.Div(id="uploaded-files", children=html.Div([""]),),
         ],
     ),
     html.Div(id="ngl-data-info"),
@@ -225,6 +228,7 @@ app.layout = html.Div(
     ],
 )
 
+
 def createDict(selection, chain, color, filename, ext, contents, uploaded=False):
     return {
         "uploaded": uploaded,
@@ -236,8 +240,9 @@ def createDict(selection, chain, color, filename, ext, contents, uploaded=False)
         "config": {"type": "text/plain", "input": contents},
     }
 
+
 # Helper function to load structures from local storage
-def getLocalData(selection, pdb_id, color):
+def getLocalData(selection, pdb_id, color, uploadedFiles):
 
     chain = "ALL"
 
@@ -246,7 +251,25 @@ def getLocalData(selection, pdb_id, color):
         pdb_id, chain = pdb_id.split(".")
 
     if pdb_id not in pdbs_list:
-        return data_dict
+        if pdb_id in uploadedFiles:
+            print("Already uploaded")
+            # print(files[:-1].split(","))
+            fname = [i for i in uploadedFiles[:-1].split(",") if pdb_id in i][0]
+            print(fname)
+
+            content = ""
+            return createDict(
+                selection,
+                chain,
+                color,
+                fname,
+                fname.split(".")[1],
+                content,
+                uploaded=False,
+            )
+
+        else:
+            return data_dict
     else:
         # get path to protein structure
         fname = [f for f in glob.glob("data/" + pdb_id + ".*")][0]
@@ -259,12 +282,13 @@ def getLocalData(selection, pdb_id, color):
 
         return createDict(
             selection, chain, color, filename, ext, contents, uploaded=False
-            )
+        )
+
 
 # Helper function to load structures from uploaded content
 def getUploadedData(uploaded_content):
     data = []
-    pdbs = []
+    uploads = []
 
     ext = "pdb"
     chain = "ALL"
@@ -278,84 +302,123 @@ def getUploadedData(uploaded_content):
             pdb_id = pdb_id.split("_")[1]
             ext = "cif"
         print(pdb_id)
-        pdbs.append(pdb_id)
 
         filename = pdb_id + "." + ext
+        uploads.append(filename)
 
         data.append(
             createDict(
-                pdb_id, chain, color_list[i], filename, ext,
-                decoded_contents, uploaded=True
-                )
+                pdb_id,
+                chain,
+                color_list[i],
+                filename,
+                ext,
+                decoded_contents,
+                uploaded=True,
             )
+        )
 
-    return data,pdbs
+    return data, uploads
+
 
 # CB viewport
 @app.callback(
-    [Output(component_id, "data"),
-     Output('pdb-dropdown', 'options')],
+    [
+        Output(component_id, "data"),
+        Output("pdb-dropdown", "options"),
+        Output("uploaded-files", "children"),
+    ],
     [
         Input("pdb-dropdown", "value"),
         Input("ngl-upload-data", "contents"),
         Input("button", "n_clicks"),
     ],
-    [State("pdb-string", "value"),
-     State('pdb-dropdown', 'options')],
+    [
+        State("pdb-string", "value"),
+        State("pdb-dropdown", "options"),
+        State("uploaded-files", "children"),
+    ],
 )
-def display_output(selection, uploaded_content, n_clicks, value, dropdown_options):
-    print ("selection,n_clicks,value,type uploaded_content")
-    print(selection, n_clicks, value, type(uploaded_content))
-    
+def display_output(
+    selection, uploaded_content, n_clicks, value, dropdown_options, files
+):
+    print("selection,n_clicks,value,type uploaded_content", "files")
+    print(selection, n_clicks, value, type(uploaded_content), type(files))
+
     input_id = None
     options = dropdown_options
-    #print (options)
-    
+    files = files["props"]["children"] if type(files) is dict else "".join(files)
+    print(files)
+
     ctx = dash.callback_context
     if ctx.triggered:
-        input_id = ctx.triggered[0]['prop_id'].split('.')[0]
+        input_id = ctx.triggered[0]["prop_id"].split(".")[0]
 
-    print ("triggred", input_id)
+    print("triggred", input_id)
 
     if input_id is None:
-        return [data_dict], options
+        return [data_dict], options, files
 
-    if input_id == 'pdb-dropdown':
-        print ("dropdown changed")
+    if input_id == "pdb-dropdown":
+        print("dropdown changed")
+        print(files)
         pdb_id = selection
-        data = [getLocalData(selection, pdb_id, color_list[0])]
-        return data, options
 
-    if input_id == 'button':
+        if pdb_id in files:
+            print("Already uploaded")
+            print(files[:-1].split(","))
+            fname = [i for i in files[:-1].split(",") if pdb_id in i][0]
+            print(fname)
+
+            content = ""
+            chain = "ALL"
+            return (
+                [
+                    createDict(
+                        pdb_id,
+                        chain,
+                        color_list[0],
+                        fname,
+                        fname.split(".")[1],
+                        content,
+                        uploaded=False,
+                    )
+                ],
+                options,
+                files,
+            )
+
+        data = [getLocalData(selection, pdb_id, color_list[0],files)]
+        return data, options, files
+
+    if input_id == "button":
         if value is None:
-            return no_update, no_update
+            return no_update, no_update, no_update
         else:
-            print ("textbox submitted")
+            print("textbox submitted")
             data = []
             if len(value) > 4:
                 pdb_id = value
                 if "_" in value:
                     for i, pdb_id in enumerate(value.split("_")):
-                        data.append(getLocalData(value, pdb_id, color_list[i]))
+                        data.append(getLocalData(value, pdb_id, color_list[i], files))
                 else:
-                    data.append(getLocalData(value, pdb_id, color_list[0]))
+                    data.append(getLocalData(value, pdb_id, color_list[0], files))
             else:
                 data.append(data_dict)
 
-            return data, options
+            return data, options, files
 
-    if input_id == 'ngl-upload-data':
-        data, pdbs = getUploadedData(uploaded_content)
+    if input_id == "ngl-upload-data":
+        data, uploads = getUploadedData(uploaded_content)
 
-        for pdb_id in pdbs:
+        for pdb_id, ext in [e.split(".") for e in uploads]:
             if pdb_id not in [e["label"] for e in options]:
-                options.append(
-                    {"label": pdb_id, 
-                     "value": pdb_id}
-                    )
-                print ("uploaded",pdb_id)
+                options.append({"label": pdb_id, "value": pdb_id})
+                print("uploaded", pdb_id)
+                files += pdb_id + "." + ext + ","
 
-        return data, options
+        return data, options, files
 
 
 # CB stage
