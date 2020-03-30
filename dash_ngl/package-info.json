@@ -26,7 +26,8 @@
   "author": "Ivo Leist <Ivo.leist@googlemail.com>",
   "license": "MIT",
   "dependencies": {
-    "ngl": "^0.10.4"
+    "ngl": "^0.10.4",
+    "ramda": "^0.27.0"
   },
   "devDependencies": {
     "@babel/core": "^7.8.4",

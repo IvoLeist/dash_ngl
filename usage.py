@@ -87,6 +87,7 @@ data_tab = [
         clearable=False,
         options=[{"label": k, "value": k} for k in pdbs_list],
         value="1BNA",
+        placeholder="placeholder"
     ),
     html.Div(
         className="app-controls-name",
@@ -327,6 +328,7 @@ def getUploadedData(uploaded_content):
         Output(component_id, "data"),
         Output("pdb-dropdown", "options"),
         Output("uploaded-files", "children"),
+        Output("pdb-dropdown", "placeholder")
     ],
     [
         Input("pdb-dropdown", "value"),
@@ -357,7 +359,7 @@ def display_output(
     print("triggred", input_id)
 
     if input_id is None:
-        return [data_dict], options, files
+        return [data_dict], options, files, no_update
 
     if input_id == "pdb-dropdown":
         print("dropdown changed")
@@ -389,11 +391,11 @@ def display_output(
             )
 
         data = [getLocalData(selection, pdb_id, color_list[0],files)]
-        return data, options, files
+        return data, options, files, no_update
 
     if input_id == "button":
         if value is None:
-            return no_update, no_update, no_update
+            return no_update, no_update, no_update, no_update
         else:
             print("textbox submitted")
             data = []
@@ -407,7 +409,7 @@ def display_output(
             else:
                 data.append(data_dict)
 
-            return data, options, files
+            return data, options, files, "Select a molecule"
 
     if input_id == "ngl-upload-data":
         data, uploads = getUploadedData(uploaded_content)
@@ -418,7 +420,7 @@ def display_output(
                 print("uploaded", pdb_id)
                 files += pdb_id + "." + ext + ","
 
-        return data, options, files
+        return data, options, files, pdb_id
 
 
 # CB stage
@@ -439,4 +441,4 @@ def update_stage(bgcolor, camera_type, quality):
 
 
 if __name__ == "__main__":
-    app.run_server(debug=True, use_reloader=False)
+    app.run_server(debug=True, use_reloader=False,port=8051)

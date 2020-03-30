@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types'; //exports a range of data validators
 import {Stage, Selection} from 'ngl'; //https://github.com/arose/ngl/blob/master/src/stage/stage.ts
+import { equals } from 'ramda';
 
 /**
  * The NglMoleculeViewer is used to render schematic diagrams
@@ -34,7 +35,7 @@ export default class DashNgl extends Component {
     console.log(data)
 
     // check if data has changed
-    if (data !== null & prevProps.data !== null) {
+    if (data !== null && prevProps.data !== null) {
       console.log({ prevProps, nextProps })
 
       // wait for the first pdb selection after startup
@@ -66,27 +67,31 @@ export default class DashNgl extends Component {
     console.log({ oldStage, newStage })
 
     // save it as a helper function
-    const isEqual = (obj1, obj2) => {
-      const obj1Keys = Object.keys(obj1)
-      const obj2Keys = Object.keys(obj2)
+    // const isEqual = (obj1, obj2) => {
+    //   const obj1Keys = Object.keys(obj1)
+    //   const obj2Keys = Object.keys(obj2)
 
-      if (obj1Keys.length !== obj2Keys.length) {
-        return false
-      }
+    //   if (obj1Keys.length !== obj2Keys.length) {
+    //     return false
+    //   }
 
-      for (const objKey of obj1Keys) {
-        if (obj1[objKey] !== obj2[objKey]) {
-          return false
+    //   for (const objKey of obj1Keys) {
+    //     if (obj1[objKey] !== obj2[objKey]) {
+    //       return false
+    //     }
+    //   }
+
+    //   return true
+    // }
+
+    if (!equals(oldStage, newStage)) {
+            return true;
         }
-      }
 
-      return true
-    }
-
-    if (isEqual(oldStage, newStage) === false) {
-      console.log('stage params changed')
-      return true
-    }
+    // if (isEqual(oldStage, newStage) === false) {
+    //   console.log('stage params changed')
+    //   return true
+    // }
     return false
   }
 
@@ -116,8 +121,13 @@ export default class DashNgl extends Component {
   // helper functions which styles the output of loadStructure/loadData
   showStructure (stageObj, chain, color, xOffset, stage) {
     if (chain !== 'ALL') {
+
+      //stageObj rest
+      //stageObj.reset
+
       const selection = new Selection(':' + chain)
-      const pa = stageObj.structure.getPrincipalAxes(selection)
+      // const pa = stageObj.structure.getPrincipalAxes(selection)
+      const pa = stageObj.structure.getView(selection).getPrincipalAxes();
 
       // delete the invisble elements ?
       console.log(selection)
@@ -153,25 +163,20 @@ export default class DashNgl extends Component {
   processDataFromBackend (data, stage, structuresList) {
     console.log('processDataFromBackend')
 
-    const xval1 = 0
-    const xval2 = 100
-    const xval3 = 200
-    const xval4 = 300
-
-    const xOffsetArr = [xval1, xval2, xval3, xval4]
-
     // loop over list of structures:
     for (var i = 0; i < data.length; i++) {
       const filename = data[i].filename
+      const xOffset = i * 100
+
       // check if already loaded
       if (structuresList.includes(filename)) {
         this.loadStructure(stage,
           filename,
           data[i].chain,
           data[i].color,
-          xOffsetArr[i])
+          xOffset)
       } else { // load from backend
-        this.loadData(data[i], stage, structuresList, xOffsetArr[i])
+        this.loadData(data[i], stage, structuresList, xOffset)
       }
     }
     const center = stage.getCenter()
@@ -233,9 +238,7 @@ export default class DashNgl extends Component {
   render () {
     const { id } = this.props
     return (
-      <div>
-        <div id={id} />
-      </div>
+      <div id={id}/>
     )
   }
 }
