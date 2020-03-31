@@ -14,7 +14,7 @@ export default class DashNgl extends Component {
   // https://hackernoon.com/the-constructor-is-dead-long-live-the-constructor-c10871bea599
   constructor (props) {
     super(props) // initiate the parent's constructor method and allows the component to inherit methods from its parent
-    this.state = { stage: null, structuresList: [] } // initial values are set
+    this.state = { stage: null, orientationMatrix: null, structuresList: [] } // initial values are set
     console.log(this.props)
     console.log(this.state)
   }
@@ -26,6 +26,10 @@ export default class DashNgl extends Component {
     const stage = new Stage(id, params)
     stage.setSize(viewportStyle.width, viewportStyle.height)
     this.setState({ stage })
+
+    const orientationMatrix = stage.viewerControls.getOrientation();
+    this.setState ( { orientationMatrix })
+
     console.log('component did mount')
   }
 
@@ -50,6 +54,13 @@ export default class DashNgl extends Component {
       console.log({ oldSelection, newSelection })
       if (oldSelection !== newSelection) {
         console.log('pdb selection has changed')
+        return true
+      } 
+
+      //check if view should be resetet
+      const resetView = data[0].resetView
+      if (oldSelection == newSelection && resetView == true){
+        console.log('reset view')  
         return true
       }
 
@@ -122,9 +133,13 @@ export default class DashNgl extends Component {
   showStructure (stageObj, chain, color, xOffset, stage) {
     if (chain !== 'ALL') {
 
-      //stageObj rest
-      //stageObj.reset
+      const { orientationMatrix } = this.state
+      console.log("orientation Matrix")
+      console.log(orientationMatrix)
+      stage.viewerControls.orient(orientationMatrix);
 
+      //stage reset
+      //stage.autoView()
       const selection = new Selection(':' + chain)
       // const pa = stageObj.structure.getPrincipalAxes(selection)
       const pa = stageObj.structure.getView(selection).getPrincipalAxes();
@@ -139,6 +154,7 @@ export default class DashNgl extends Component {
         sele: ':' + chain,
         color: color
       })
+      console.log ("setRotation")
       stageObj.setRotation(pa.getRotationQuaternion())
 
       // translate by x angstrom along chosen axis
@@ -147,7 +163,13 @@ export default class DashNgl extends Component {
     } else {
       stageObj.addRepresentation('cartoon')
     }
-    stage.animationControls.moveComponent(stageObj, stageObj.getCenter(), 1000)
+    
+    //stage.animationControls.moveComponent(stageObj, stageObj.getCenter(), 1000)
+    const center = stage.getCenter()
+    const newZoom = -500
+    const duration = 1000
+    stage.animationControls.zoomMove(center, newZoom, duration)
+
     // stage.autoView()
   }
 
@@ -179,10 +201,10 @@ export default class DashNgl extends Component {
         this.loadData(data[i], stage, structuresList, xOffset)
       }
     }
-    const center = stage.getCenter()
-    const newZoom = -500
-    const duration = 1000
-    stage.animationControls.zoomMove(center, newZoom, duration)
+    // const center = stage.getCenter()
+    // const newZoom = -500
+    // const duration = 1000
+    // stage.animationControls.zoomMove(center, newZoom, duration)
 
     // let orientationMatrix = stage.viewerControls.getOrientation();
     // console.log(orientationMatrix)
@@ -257,6 +279,7 @@ const defaultStageParameters = {
 const defaultData = [{
   uploaded: true,
   selectedValue: 'placeholder',
+  resetView: false,
   chain: 'ALL',
   color: 'red',
   filename: 'placeholder',
@@ -327,6 +350,7 @@ DashNgl.propTypes = {
     PropTypes.exact({
       uploaded: PropTypes.bool.isRequired,
       selectedValue: PropTypes.string.isRequired,
+      resetView: PropTypes.bool.isRequired, 
       chain: PropTypes.string.isRequired,
       color: PropTypes.string.isRequired,
       filename: PropTypes.string.isRequired,

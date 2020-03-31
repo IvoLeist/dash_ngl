@@ -40,10 +40,11 @@ pdbID1.chain_pdbID2.chain
 . indicates that only one chain should be shown
  _ indicates that more than one protein should be shown}
 
-\item{data}{List of lists containing elements 'uploaded', 'selectedvalue', 'chain', 'color', 'filename', 'ext', 'config'.
+\item{data}{List of lists containing elements 'uploaded', 'selectedvalue', 'resetview', 'chain', 'color', 'filename', 'ext', 'config'.
 those elements have the following types:
   - uploaded (logical; required)
   - selectedvalue (character; required)
+  - resetview (logical; required)
   - chain (character; required)
   - color (character; required)
   - filename (character; required)

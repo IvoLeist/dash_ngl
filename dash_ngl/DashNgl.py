@@ -43,6 +43,7 @@ pdbID1.chain_pdbID2.chain
 - data (dict; default [{
   uploaded: true,
   selectedValue: 'placeholder',
+  resetView: false,
   chain: 'ALL',
   color: 'red',
   filename: 'placeholder',
@@ -57,10 +58,11 @@ color: color in hex format
 filename: name of the used pdb/cif file
 ext: file extensions (pdb or cif)
 config.input: content of the pdb file
-config.type: format of config.input. data has the following type: list of dicts containing keys 'uploaded', 'selectedValue', 'chain', 'color', 'filename', 'ext', 'config'.
+config.type: format of config.input. data has the following type: list of dicts containing keys 'uploaded', 'selectedValue', 'resetView', 'chain', 'color', 'filename', 'ext', 'config'.
 Those keys have the following types:
   - uploaded (boolean; required)
   - selectedValue (string; required)
+  - resetView (boolean; required)
   - chain (string; required)
   - color (string; required)
   - filename (string; required)
