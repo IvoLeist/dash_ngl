@@ -131,6 +131,12 @@ export default class DashNgl extends Component {
 
   // helper functions which styles the output of loadStructure/loadData
   showStructure (stageObj, chain, color, xOffset, stage) {
+    
+    const { orientationMatrix } = this.state
+    console.log("orientation Matrix")
+    console.log(orientationMatrix)
+    stage.viewerControls.orient(orientationMatrix);
+
     if (chain !== 'ALL') {
 
       const { orientationMatrix } = this.state
@@ -142,7 +148,9 @@ export default class DashNgl extends Component {
       //stage.autoView()
       const selection = new Selection(':' + chain)
       // const pa = stageObj.structure.getPrincipalAxes(selection)
-      const pa = stageObj.structure.getView(selection).getPrincipalAxes();
+      const struc = stageObj.structure.getView(selection)
+      const pa = struc.getPrincipalAxes()
+      const comp = stage.addComponentFromObject(struc)
 
       // delete the invisble elements ?
       console.log(selection)
@@ -150,15 +158,19 @@ export default class DashNgl extends Component {
       console.log(pa.getRotationQuaternion())
       console.log(color)
 
-      stageObj.addRepresentation('cartoon', {
+      comp.addRepresentation('cartoon', {
         sele: ':' + chain,
         color: color
       })
+      comp.addRepresentation( "axes",{
+        sele: ":"+chain,
+        showBox: true
+      })
       console.log ("setRotation")
-      stageObj.setRotation(pa.getRotationQuaternion())
+      comp.setRotation(pa.getRotationQuaternion())
 
       // translate by x angstrom along chosen axis
-      stageObj.setPosition([xOffset, 0, 0])
+      comp.setPosition([xOffset, 0, 0])
       // stage.animationControls.rotate(pa.getRotationQuaternion(),1500)
     } else {
       stageObj.addRepresentation('cartoon')

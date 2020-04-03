@@ -84,3 +84,7 @@
 #ngl-body h4 {
     text-align: center;
 }
+
+#warning_div {
+    color: red !important;
+}

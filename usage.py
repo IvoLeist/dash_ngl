@@ -12,7 +12,6 @@ import dash_core_components as dcc
 app = dash.Dash(__name__)
 app.css.config.serve_locally = True
 
-
 # Preset colors for the shown molecules
 color_list = [
     "#e41a1c",
@@ -113,12 +112,28 @@ data_tab = [
                 multiple=True,
             ),
             html.Div(id="uploaded-files", children=html.Div([""]),),
+            html.Div(id="warning_div", children=html.Div([""]),)
         ],
     ),
     html.Div(id="ngl-data-info"),
 ]
 
 view_tab = [
+    html.Div(
+        title="select background color",
+        className="app-controls-block",
+        id="ngl-mols-color",
+        children=[
+            html.P(
+                "Chain colors",
+                style={"font-weight": "bold", "margin-bottom": "10px",},
+            ),
+            dcc.Input(
+                id="molecules-chain-color",
+                value=",".join(color_list),
+            ),
+        ],
+    ),
     html.Div(
         title="select background color",
         className="app-controls-block",
@@ -273,22 +288,20 @@ def getLocalData(selection, pdb_id, color, uploadedFiles, resetView=False):
                 resetView,
                 uploaded=False,
             )
+        return data_dict
 
-        else:
-            return data_dict
-    else:
-        # get path to protein structure
-        fname = [f for f in glob.glob("data/" + pdb_id + ".*")][0]
+    # get path to protein structure
+    fname = [f for f in glob.glob("data/" + pdb_id + ".*")][0]
 
-        with open(fname, "r") as f:
-            contents = f.read()
+    with open(fname, "r") as f:
+        contents = f.read()
 
-        filename = fname.split("/")[-1]
-        ext = fname.split(".")[-1]
+    filename = fname.split("/")[-1]
+    ext = fname.split(".")[-1]
 
-        return createDict(
-            selection, chain, color, filename, ext, contents, resetView, uploaded=False
-        )
+    return createDict(
+        selection, chain, color, filename, ext, contents, resetView, uploaded=False
+    )
 
 
 # Helper function to load structures from uploaded content
@@ -334,7 +347,8 @@ def getUploadedData(uploaded_content):
         Output(component_id, "data"),
         Output("pdb-dropdown", "options"),
         Output("uploaded-files", "children"),
-        Output("pdb-dropdown", "placeholder")
+        Output("pdb-dropdown", "placeholder"),
+        Output('warning_div', 'children') 
     ],
     [
         Input("pdb-dropdown", "value"),
@@ -346,16 +360,18 @@ def getUploadedData(uploaded_content):
         State("pdb-string", "value"),
         State("pdb-dropdown", "options"),
         State("uploaded-files", "children"),
+        State("molecules-chain-color", "value"),
     ],
 )
 def display_output(
-    selection, uploaded_content, pdbString_clicks, resetView_clicks, pdbString, dropdown_options, files
+    selection, uploaded_content, pdbString_clicks, resetView_clicks, pdbString, dropdown_options, files, colors
 ):
     print("selection,pdbString_clicks,pdbString,type uploaded_content", "files")
     print(selection, pdbString_clicks, pdbString, type(uploaded_content), type(files))
 
     input_id = None
     options = dropdown_options
+    colors_list = colors.split(",")
     files = files["props"]["children"] if isinstance(files, dict) else "".join(files)
     print(files)
 
@@ -366,7 +382,7 @@ def display_output(
     print("triggred", input_id)
 
     if input_id is None:
-        return [data_dict], options, files, no_update
+        return [data_dict], options, files, no_update, no_update
 
     if input_id == "pdb-dropdown":
         print("dropdown changed")
@@ -386,7 +402,7 @@ def display_output(
                     createDict(
                         pdb_id,
                         chain,
-                        color_list[0],
+                        colors_list[0],
                         fname,
                         fname.split(".")[1],
                         content,
@@ -399,29 +415,40 @@ def display_output(
             )
 
         data = [getLocalData(selection, pdb_id, color_list[0], files, resetView=False)]
-        return data, options, files, no_update
+        return data, options, files, no_update, no_update
 
     # TODO submit and reset view in one button
     if input_id in ["btn-pdbString", "btn-resetView"]:
+        warning = ""
+
         if pdbString is None:
-            return no_update, no_update, no_update, no_update
+            return no_update, no_update, no_update, no_update, no_update
 
         resetView = False
         if input_id == "btn-resetView":
             resetView = True
 
         data = []
-        if len(pdbString) > 4:
+        if len(pdbString) > 3:
             pdb_id = pdbString
             if "_" in pdbString:
                 for i, pdb_id in enumerate(pdbString.split("_")):
-                    data.append(getLocalData(pdbString, pdb_id, color_list[i], files, resetView=resetView))
+                    if i <= len(colors_list)-1:
+                        data.append(getLocalData(
+                            pdbString, pdb_id, color_list[i], files, resetView=resetView))
+                    else:
+                        data.append(data_dict)
+                        warning = "more molecules selected as chain colors defined \
+                                   either remove one molecule or add a extra color in the view tab \
+                                   and reset view before submitting it again."
+                        return data, options, files, no_update, warning
             else:
-                data.append(getLocalData(pdbString, pdb_id, color_list[0], files, resetView=resetView))
+                data.append(getLocalData(
+                    pdbString, pdb_id, color_list[0], files, resetView=resetView))
         else:
             data.append(data_dict)
 
-        return data, options, files, "Select a molecule"
+        return data, options, files, "Select a molecule", warning
 
     if input_id == "ngl-upload-data":
         data, uploads = getUploadedData(uploaded_content)
@@ -432,7 +459,7 @@ def display_output(
                 print("uploaded", pdb_id)
                 files += pdb_id + "." + ext + ","
 
-        return data, options, files, pdb_id
+        return data, options, files, pdb_id, no_update
 
 
 # CB stage
@@ -450,7 +477,6 @@ def update_stage(bgcolor, camera_type, quality):
         "cameraType": camera_type,
         "quality": quality,
     }
-
 
 if __name__ == "__main__":
     app.run_server(debug=True, use_reloader=False, port=8051)
