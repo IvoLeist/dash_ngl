@@ -319,7 +319,7 @@ def getLocalData(selection, pdb_id, color, uploadedFiles, resetView=False):
 
     return createDict(
         selection, chain, aa_range,
-        color, filename, ext, content, 
+        color, filename, ext, content,
         resetView, uploaded=False
     )
 

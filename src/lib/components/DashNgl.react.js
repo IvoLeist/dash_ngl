@@ -151,10 +151,11 @@ export default class DashNgl extends Component {
     }
     
     //stage.animationControls.moveComponent(stageObj, stageObj.getCenter(), 1000)
-    const center = stage.getCenter()
+    //const center = stage.getCenter()
     const newZoom = -500
     const duration = 1000
-    stage.animationControls.zoomMove(center, newZoom, duration)
+    stage.animationControls.zoom(newZoom, duration)
+    //stage.animationControls.zoomMove(center, newZoom, duration)
 
     // stage.autoView()
   }
