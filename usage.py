@@ -50,6 +50,7 @@ data_dict = {
     'selectedValue': 'placeholder',
     'resetView': False,
     'chain': 'ALL',
+    'range': 'ALL',
     'color': '#e41a1c',
     'filename': 'placeholder',
     'ext': '',
@@ -251,12 +252,15 @@ app.layout = html.Div(
 )
 
 
-def createDict(selection, chain, color, filename, ext, contents, resetView=False, uploaded=False):
+def createDict(selection, chain, aa_range,
+               color, filename, ext, contents, 
+               resetView=False, uploaded=False):
     return {
         'filename': filename,
         'ext': ext,
         'selectedValue': selection,
         'chain': chain,
+        'range': aa_range,
         'color': color,
         'config': {'type': 'text/plain', 'input': contents},
         'resetView': resetView,
@@ -267,11 +271,16 @@ def createDict(selection, chain, color, filename, ext, contents, resetView=False
 # Helper function to load structures from local storage
 def getLocalData(selection, pdb_id, color, uploadedFiles, resetView=False):
 
-    chain = 'ALL'
+    chain = 'ALL',
+    aa_range = 'ALL'
 
     # Check if only one chain should be shown
     if '.' in pdb_id:
         pdb_id, chain = pdb_id.split('.')
+
+        #Check if only a specified amino acids range should be shown:
+        if ':' in chain:
+            chain, aa_range = chain.split(':')
 
     if pdb_id not in pdbs_list:
         if pdb_id in uploadedFiles:
@@ -284,6 +293,7 @@ def getLocalData(selection, pdb_id, color, uploadedFiles, resetView=False):
             return createDict(
                 selection,
                 chain,
+                aa_range,
                 color,
                 fname,
                 fname.split('.')[1],
@@ -308,7 +318,9 @@ def getLocalData(selection, pdb_id, color, uploadedFiles, resetView=False):
     filename = fname.split('/')[-1]
 
     return createDict(
-        selection, chain, color, filename, ext, content, resetView, uploaded=False
+        selection, chain, aa_range,
+        color, filename, ext, content, 
+        resetView, uploaded=False
     )
 
 
@@ -319,6 +331,7 @@ def getUploadedData(uploaded_content):
 
     ext = 'pdb'
     chain = 'ALL'
+    aa_range = 'ALL'
 
     for i, content in enumerate(uploaded_content):
         content_type, content = str(content).split(',')
@@ -349,6 +362,7 @@ def getUploadedData(uploaded_content):
             createDict(
                 pdb_id,
                 chain,
+                aa_range,
                 color_list[i],
                 filename,
                 ext,
@@ -417,11 +431,13 @@ def display_output(
 
             content = ''
             chain = 'ALL'
+            aa_range = 'ALL'
             return (
                 [
                     createDict(
                         pdb_id,
                         chain,
+                        aa_range,
                         colors_list[0],
                         fname,
                         fname.split('.')[1],

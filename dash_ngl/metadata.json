@@ -17,6 +17,10 @@
             "type": null
           },
           {
+            "name": "range",
+            "type": null
+          },
+          {
             "name": "color",
             "type": null
           },
@@ -46,6 +50,10 @@
           },
           {
             "name": "chain",
+            "type": null
+          },
+          {
+            "name": "range",
             "type": null
           },
           {
@@ -163,7 +171,7 @@
           "name": "string"
         },
         "required": false,
-        "description": "Variable which defines how many molecules should be shown and/or which chain\nThe following format needs to be used:\npdbID1.chain_pdbID2.chain\n. indicates that only one chain should be shown\n _ indicates that more than one protein should be shown"
+        "description": "Variable which defines how many molecules should be shown and/or which chain\nThe following format needs to be used:\npdbID1.chain:start-end_pdbID2.chain:start-end\n. indicates that only one chain should be shown\n: indicates that a specific range should be shown (e.g. 1-50)\n _ indicates that more than one protein should be shown"
       },
       "data": {
         "type": {
@@ -171,26 +179,6 @@
           "value": {
             "name": "exact",
             "value": {
-              "uploaded": {
-                "name": "bool",
-                "required": true
-              },
-              "selectedValue": {
-                "name": "string",
-                "required": true
-              },
-              "resetView": {
-                "name": "bool",
-                "required": true
-              },
-              "chain": {
-                "name": "string",
-                "required": true
-              },
-              "color": {
-                "name": "string",
-                "required": true
-              },
               "filename": {
                 "name": "string",
                 "required": true
@@ -198,6 +186,22 @@
               "ext": {
                 "name": "string",
                 "required": false
+              },
+              "selectedValue": {
+                "name": "string",
+                "required": true
+              },
+              "chain": {
+                "name": "string",
+                "required": true
+              },
+              "range": {
+                "name": "string",
+                "required": true
+              },
+              "color": {
+                "name": "string",
+                "required": true
               },
               "config": {
                 "name": "exact",
@@ -212,14 +216,22 @@
                   }
                 },
                 "required": false
+              },
+              "resetView": {
+                "name": "bool",
+                "required": true
+              },
+              "uploaded": {
+                "name": "bool",
+                "required": true
               }
             }
           }
         },
         "required": false,
-        "description": "The data (in JSON format) that will be used to display the molecule\nselectedValue: pdbString\ncolor: color in hex format\nfilename: name of the used pdb/cif file\next: file extensions (pdb or cif)\nconfig.input: content of the pdb file\nconfig.type: format of config.input",
+        "description": "The data (in JSON format) that will be used to display the molecule\nfilename: name of the used pdb/cif file\next: file extensions (pdb or cif)\nselectedValue: pdbString\nchain: selected chain\nrange: selected range\ncolor: color in hex format\nconfig.input: content of the pdb file\nconfig.type: format of config.input\nresetView: bool if the view should be resettet\nuploaded: bool if the file was uploaded",
         "defaultValue": {
-          "value": "[{\n  uploaded: true,\n  selectedValue: 'placeholder',\n  resetView: false,\n  chain: 'ALL',\n  color: 'red',\n  filename: 'placeholder',\n  ext: '',\n  config: {\n    type: 'text/plain',\n    input: ''\n  }\n}]",
+          "value": "[{\n  uploaded: true,\n  selectedValue: 'placeholder',\n  resetView: false,\n  chain: 'ALL',\n  range: 'ALL',\n  color: 'red',\n  filename: 'placeholder',\n  ext: '',\n  config: {\n    type: 'text/plain',\n    input: ''\n  }\n}]",
           "computed": false
         }
       }

@@ -37,14 +37,16 @@ Those keys have the following types:
   - cameraType (string; optional)
 - pdbString (string; optional): Variable which defines how many molecules should be shown and/or which chain
 The following format needs to be used:
-pdbID1.chain_pdbID2.chain
+pdbID1.chain:start-end_pdbID2.chain:start-end
 . indicates that only one chain should be shown
+: indicates that a specific range should be shown (e.g. 1-50)
  _ indicates that more than one protein should be shown
 - data (dict; default [{
   uploaded: true,
   selectedValue: 'placeholder',
   resetView: false,
   chain: 'ALL',
+  range: 'ALL',
   color: 'red',
   filename: 'placeholder',
   ext: '',
@@ -53,24 +55,29 @@ pdbID1.chain_pdbID2.chain
     input: ''
   }
 }]): The data (in JSON format) that will be used to display the molecule
-selectedValue: pdbString
-color: color in hex format
 filename: name of the used pdb/cif file
 ext: file extensions (pdb or cif)
+selectedValue: pdbString
+chain: selected chain
+range: selected range
+color: color in hex format
 config.input: content of the pdb file
-config.type: format of config.input. data has the following type: list of dicts containing keys 'uploaded', 'selectedValue', 'resetView', 'chain', 'color', 'filename', 'ext', 'config'.
+config.type: format of config.input
+resetView: bool if the view should be resettet
+uploaded: bool if the file was uploaded. data has the following type: list of dicts containing keys 'filename', 'ext', 'selectedValue', 'chain', 'range', 'color', 'config', 'resetView', 'uploaded'.
 Those keys have the following types:
-  - uploaded (boolean; required)
-  - selectedValue (string; required)
-  - resetView (boolean; required)
-  - chain (string; required)
-  - color (string; required)
   - filename (string; required)
   - ext (string; optional)
+  - selectedValue (string; required)
+  - chain (string; required)
+  - range (string; required)
+  - color (string; required)
   - config (dict; optional): config has the following type: dict containing keys 'type', 'input'.
 Those keys have the following types:
   - type (string; required)
-  - input (string; required)"""
+  - input (string; required)
+  - resetView (boolean; required)
+  - uploaded (boolean; required)"""
     @_explicitize_args
     def __init__(self, id=Component.UNDEFINED, viewportStyle=Component.UNDEFINED, stageParameters=Component.UNDEFINED, pdbString=Component.UNDEFINED, data=Component.UNDEFINED, **kwargs):
         self._prop_names = ['id', 'viewportStyle', 'stageParameters', 'pdbString', 'data']

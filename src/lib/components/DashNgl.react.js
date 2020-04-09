@@ -77,32 +77,10 @@ export default class DashNgl extends Component {
     const newStage = stageParameters
     console.log({ oldStage, newStage })
 
-    // save it as a helper function
-    // const isEqual = (obj1, obj2) => {
-    //   const obj1Keys = Object.keys(obj1)
-    //   const obj2Keys = Object.keys(obj2)
-
-    //   if (obj1Keys.length !== obj2Keys.length) {
-    //     return false
-    //   }
-
-    //   for (const objKey of obj1Keys) {
-    //     if (obj1[objKey] !== obj2[objKey]) {
-    //       return false
-    //     }
-    //   }
-
-    //   return true
-    // }
-
     if (!equals(oldStage, newStage)) {
             return true;
         }
 
-    // if (isEqual(oldStage, newStage) === false) {
-    //   console.log('stage params changed')
-    //   return true
-    // }
     return false
   }
 
@@ -130,7 +108,7 @@ export default class DashNgl extends Component {
   }
 
   // helper functions which styles the output of loadStructure/loadData
-  showStructure (stageObj, chain, color, xOffset, stage) {
+  showStructure (stageObj, chain, range, color, xOffset, stage) {
     
     const { orientationMatrix } = this.state
     console.log("orientation Matrix")
@@ -138,40 +116,36 @@ export default class DashNgl extends Component {
     stage.viewerControls.orient(orientationMatrix);
 
     if (chain !== 'ALL') {
+      
+      let sele = ':' + chain
+      if (range !== 'ALL') {
+        sele = sele + ' and ' + range
+        console.log (sele)
+      }
 
-      const { orientationMatrix } = this.state
-      console.log("orientation Matrix")
-      console.log(orientationMatrix)
-      stage.viewerControls.orient(orientationMatrix);
+      const selection = new Selection(sele)
+      const pa = stageObj.structure.getPrincipalAxes(selection)
+      const struc = stage.addComponentFromObject(
+                      stageObj.structure.getView(
+                        selection)
+                    )
+      const struc_centre = struc.getCenter()
+      struc.setPosition(
+        [(0-struc_centre.x)-xOffset,
+          0-struc_centre.y,
+          0-struc_centre.z]
+      )
+          
+      struc.setRotation(pa.getRotationQuaternion())
 
-      //stage reset
-      //stage.autoView()
-      const selection = new Selection(':' + chain)
-      // const pa = stageObj.structure.getPrincipalAxes(selection)
-      const struc = stageObj.structure.getView(selection)
-      const pa = struc.getPrincipalAxes()
-      const comp = stage.addComponentFromObject(struc)
-
-      // delete the invisble elements ?
-      console.log(selection)
-      console.log(pa)
-      console.log(pa.getRotationQuaternion())
-      console.log(color)
-
-      comp.addRepresentation('cartoon', {
-        sele: ':' + chain,
+      struc.addRepresentation('cartoon', {
+        sele: sele,
         color: color
       })
-      comp.addRepresentation( "axes",{
-        sele: ":"+chain,
-        showBox: true
-      })
-      console.log ("setRotation")
-      comp.setRotation(pa.getRotationQuaternion())
-
-      // translate by x angstrom along chosen axis
-      comp.setPosition([xOffset, 0, 0])
-      // stage.animationControls.rotate(pa.getRotationQuaternion(),1500)
+      // comp.addRepresentation( "axes",{
+      //   sele: ":"+chain,
+      //   showBox: true
+      // })
     } else {
       stageObj.addRepresentation('cartoon')
     }
@@ -186,11 +160,11 @@ export default class DashNgl extends Component {
   }
 
   // If user has selected structure already just add the new Representation
-  loadStructure (stage, filename, chain, color, xOffset) {
+  loadStructure (stage, filename, chain, range, color, xOffset) {
     console.log('load from browser')
     // console.log(filename)
     const stageObj = stage.getComponentsByName(filename).list[0]
-    this.showStructure(stageObj, chain, color, xOffset, stage)
+    this.showStructure(stageObj, chain, range, color, xOffset, stage)
   }
 
   // If not load the structure from the backend
@@ -207,6 +181,7 @@ export default class DashNgl extends Component {
         this.loadStructure(stage,
           filename,
           data[i].chain,
+          data[i].range,
           data[i].color,
           xOffset)
       } else { // load from backend
@@ -256,6 +231,7 @@ export default class DashNgl extends Component {
       this.showStructure(
         stageObj,
         data.chain,
+        data.range,
         data.color,
         xOffset,
         stage
@@ -293,6 +269,7 @@ const defaultData = [{
   selectedValue: 'placeholder',
   resetView: false,
   chain: 'ALL',
+  range: 'ALL',
   color: 'red',
   filename: 'placeholder',
   ext: '',
@@ -343,34 +320,40 @@ DashNgl.propTypes = {
   /**
    * Variable which defines how many molecules should be shown and/or which chain
    * The following format needs to be used:
-   * pdbID1.chain_pdbID2.chain
+   * pdbID1.chain:start-end_pdbID2.chain:start-end
    * . indicates that only one chain should be shown
+   * : indicates that a specific range should be shown (e.g. 1-50)
    *  _ indicates that more than one protein should be shown
    */
   pdbString: PropTypes.string,
 
   /**
    * The data (in JSON format) that will be used to display the molecule
-   * selectedValue: pdbString
-   * color: color in hex format
    * filename: name of the used pdb/cif file
    * ext: file extensions (pdb or cif)
+   * selectedValue: pdbString
+   * chain: selected chain
+   * range: selected range
+   * color: color in hex format
    * config.input: content of the pdb file
    * config.type: format of config.input
+   * resetView: bool if the view should be resettet
+   * uploaded: bool if the file was uploaded
    */
   data: PropTypes.arrayOf(
     PropTypes.exact({
-      uploaded: PropTypes.bool.isRequired,
-      selectedValue: PropTypes.string.isRequired,
-      resetView: PropTypes.bool.isRequired, 
-      chain: PropTypes.string.isRequired,
-      color: PropTypes.string.isRequired,
       filename: PropTypes.string.isRequired,
       ext: PropTypes.string,
+      selectedValue: PropTypes.string.isRequired,
+      chain: PropTypes.string.isRequired,
+      range: PropTypes.string.isRequired,
+      color: PropTypes.string.isRequired,
       config: PropTypes.exact({
         type: PropTypes.string.isRequired,
         input: PropTypes.string.isRequired
-      })
+      }),
+      resetView: PropTypes.bool.isRequired, 
+      uploaded: PropTypes.bool.isRequired,
     })
   )
 }
