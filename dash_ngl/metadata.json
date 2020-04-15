@@ -4,6 +4,18 @@
     "displayName": "DashNgl",
     "methods": [
       {
+        "name": "generateImage",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "stage",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
         "name": "showStructure",
         "docblock": null,
         "modifiers": [],
@@ -166,6 +178,38 @@
           "computed": false
         }
       },
+      "imageParameters": {
+        "type": {
+          "name": "exact",
+          "value": {
+            "antialias": {
+              "name": "bool",
+              "required": false
+            },
+            "transparent": {
+              "name": "bool",
+              "required": false
+            },
+            "trim": {
+              "name": "bool",
+              "required": false
+            }
+          }
+        },
+        "required": false,
+        "description": "Parameters (in JSON format) for exporting the image",
+        "defaultValue": {
+          "value": "{\n  antialias: true,\n  transparent: true,\n  trim: true\n}",
+          "computed": false
+        }
+      },
+      "downloadImage": {
+        "type": {
+          "name": "bool"
+        },
+        "required": false,
+        "description": "flag if download image was pressed"
+      },
       "pdbString": {
         "type": {
           "name": "string"
@@ -185,7 +229,7 @@
               },
               "ext": {
                 "name": "string",
-                "required": false
+                "required": true
               },
               "selectedValue": {
                 "name": "string",

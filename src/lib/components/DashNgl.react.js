@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types'; //exports a range of data validators
-import {Stage, Selection} from 'ngl'; //https://github.com/arose/ngl/blob/master/src/stage/stage.ts
+import {Stage, Selection, download } from 'ngl'; //https://github.com/arose/ngl/blob/master/src/stage/stage.ts
 import { equals } from 'ramda';
 
 /**
@@ -35,7 +35,7 @@ export default class DashNgl extends Component {
 
   // triggered by any update of the DOM (e.g. new dropdown selection)
   shouldComponentUpdate (prevProps, nextProps) {
-    const { stageParameters, data } = this.props
+    const { stageParameters, data, downloadImage } = this.props
     console.log(data)
 
     // check if data has changed
@@ -57,7 +57,7 @@ export default class DashNgl extends Component {
         return true
       } 
 
-      //check if view should be resetet
+      // check if view should be resetet
       const resetView = data[0].resetView
       if (oldSelection == newSelection && resetView == true){
         console.log('reset view')  
@@ -78,8 +78,15 @@ export default class DashNgl extends Component {
     console.log({ oldStage, newStage })
 
     if (!equals(oldStage, newStage)) {
-            return true;
+            return true
         }
+
+    // check if export image has been selected
+    console.log(prevProps.downloadImage)
+    console.log(downloadImage)
+    if (prevProps.downloadImage !== downloadImage){
+      return true
+    }
 
     return false
   }
@@ -87,24 +94,45 @@ export default class DashNgl extends Component {
   // called only if shouldComponentUpdate evaluates to true
   componentDidUpdate () {
     console.log('updated')
-    const { data, stageParameters } = this.props
+    const { stageParameters, data, downloadImage } = this.props
     const { stage, structuresList } = this.state
-
-    console.log({ data, stageParameters })
+    console.log(downloadImage)
+    const newSelection = data[0].selectedValue
 
     stage.setParameters(stageParameters)
-
-    const newSelection = data[0].selectedValue
+    
+    console.log({ data, stageParameters })
     console.log(structuresList)
 
-    if (newSelection !== 'placeholder') {
-      // console.log(newSelection)
-      stage.eachComponent(function (comp) {
-        comp.removeAllRepresentations()
-      })
+    if (downloadImage === false && newSelection !== 'placeholder') {
+        // console.log(newSelection)
+        stage.eachComponent(function (comp) {
+          comp.removeAllRepresentations()
+        })
+  
+        this.processDataFromBackend(data, stage, structuresList)
+      }
 
-      this.processDataFromBackend(data, stage, structuresList)
+    if (downloadImage === true){
+      this.generateImage(stage)
     }
+  }
+
+  // helper function
+  generateImage(stage) {
+    const {imageParameters} = this.props
+    console.log('generate image')
+    console.log(stage)
+
+    stage.makeImage({
+      factor: 1,
+      antialias: imageParameters.antialias,
+      trim: imageParameters.trim,
+      transparent: imageParameters.transparent
+    }).then(function( blob ){
+        console.log(blob)
+        download( blob, "screenshot.png" );
+    });
   }
 
   // helper functions which styles the output of loadStructure/loadData
@@ -265,6 +293,12 @@ const defaultStageParameters = {
   cameraType: 'perspective'
 }
 
+const defaultImageParameters = {
+  antialias: true,
+  transparent: true,
+  trim: true
+}
+
 const defaultData = [{
   uploaded: true,
   selectedValue: 'placeholder',
@@ -285,7 +319,8 @@ console.log(defaultData)
 DashNgl.defaultProps = {
   data: defaultData,
   viewportStyle: defaultViewportStyle,
-  stageParameters: defaultStageParameters
+  stageParameters: defaultStageParameters,
+  imageParameters: defaultImageParameters
 }
 
 DashNgl.propTypes = {
@@ -318,6 +353,20 @@ DashNgl.propTypes = {
     cameraType: PropTypes.string
   }),
 
+   /**
+   * Parameters (in JSON format) for exporting the image
+   */
+  imageParameters: PropTypes.exact({
+    antialias: PropTypes.bool,
+    transparent: PropTypes.bool,
+    trim: PropTypes.bool
+  }),
+
+  /**
+   * flag if download image was pressed
+   */
+  downloadImage: PropTypes.bool,
+
   /**
    * Variable which defines how many molecules should be shown and/or which chain
    * The following format needs to be used:
@@ -344,7 +393,7 @@ DashNgl.propTypes = {
   data: PropTypes.arrayOf(
     PropTypes.exact({
       filename: PropTypes.string.isRequired,
-      ext: PropTypes.string,
+      ext: PropTypes.string.isRequired,
       selectedValue: PropTypes.string.isRequired,
       chain: PropTypes.string.isRequired,
       range: PropTypes.string.isRequired,

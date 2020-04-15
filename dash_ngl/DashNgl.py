@@ -35,6 +35,16 @@ Those keys have the following types:
   - quality (string; optional)
   - backgroundColor (string; optional)
   - cameraType (string; optional)
+- imageParameters (dict; default {
+  antialias: true,
+  transparent: true,
+  trim: true
+}): Parameters (in JSON format) for exporting the image. imageParameters has the following type: dict containing keys 'antialias', 'transparent', 'trim'.
+Those keys have the following types:
+  - antialias (boolean; optional)
+  - transparent (boolean; optional)
+  - trim (boolean; optional)
+- downloadImage (boolean; optional): flag if download image was pressed
 - pdbString (string; optional): Variable which defines how many molecules should be shown and/or which chain
 The following format needs to be used:
 pdbID1.chain:start-end_pdbID2.chain:start-end
@@ -67,7 +77,7 @@ resetView: bool if the view should be resettet
 uploaded: bool if the file was uploaded. data has the following type: list of dicts containing keys 'filename', 'ext', 'selectedValue', 'chain', 'range', 'color', 'config', 'resetView', 'uploaded'.
 Those keys have the following types:
   - filename (string; required)
-  - ext (string; optional)
+  - ext (string; required)
   - selectedValue (string; required)
   - chain (string; required)
   - range (string; required)
@@ -79,12 +89,12 @@ Those keys have the following types:
   - resetView (boolean; required)
   - uploaded (boolean; required)"""
     @_explicitize_args
-    def __init__(self, id=Component.UNDEFINED, viewportStyle=Component.UNDEFINED, stageParameters=Component.UNDEFINED, pdbString=Component.UNDEFINED, data=Component.UNDEFINED, **kwargs):
-        self._prop_names = ['id', 'viewportStyle', 'stageParameters', 'pdbString', 'data']
+    def __init__(self, id=Component.UNDEFINED, viewportStyle=Component.UNDEFINED, stageParameters=Component.UNDEFINED, imageParameters=Component.UNDEFINED, downloadImage=Component.UNDEFINED, pdbString=Component.UNDEFINED, data=Component.UNDEFINED, **kwargs):
+        self._prop_names = ['id', 'viewportStyle', 'stageParameters', 'imageParameters', 'downloadImage', 'pdbString', 'data']
         self._type = 'DashNgl'
         self._namespace = 'dash_ngl'
         self._valid_wildcard_attributes =            []
-        self.available_properties = ['id', 'viewportStyle', 'stageParameters', 'pdbString', 'data']
+        self.available_properties = ['id', 'viewportStyle', 'stageParameters', 'imageParameters', 'downloadImage', 'pdbString', 'data']
         self.available_wildcard_properties =            []
 
         _explicit_args = kwargs.pop('_explicit_args')

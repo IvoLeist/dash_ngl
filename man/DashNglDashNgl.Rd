@@ -10,7 +10,8 @@ The NglMoleculeViewer is used to render schematic diagrams of biomolecules in ri
 }
 
 \usage{
-DashNglDashNgl(id=NULL, viewportStyle=NULL, stageParameters=NULL, pdbString=NULL, data=NULL)
+DashNglDashNgl(id=NULL, viewportStyle=NULL, stageParameters=NULL, imageParameters=NULL,
+downloadImage=NULL, pdbString=NULL, data=NULL)
 }
 
 \arguments{
@@ -34,6 +35,14 @@ Currently implemented are the quality of the visualisation
 and the background colorFor a full list see:
 http://nglviewer.org/ngl/api/file/src/stage/stage.js.html}
 
+\item{imageParameters}{Lists containing elements 'antialias', 'transparent', 'trim'.
+those elements have the following types:
+  - antialias (logical; optional)
+  - transparent (logical; optional)
+  - trim (logical; optional). Parameters (in JSON format) for exporting the image}
+
+\item{downloadImage}{Logical. flag if download image was pressed}
+
 \item{pdbString}{Character. Variable which defines how many molecules should be shown and/or which chain
 The following format needs to be used:
 pdbID1.chain:start-end_pdbID2.chain:start-end
@@ -44,7 +53,7 @@ pdbID1.chain:start-end_pdbID2.chain:start-end
 \item{data}{List of lists containing elements 'filename', 'ext', 'selectedvalue', 'chain', 'range', 'color', 'config', 'resetview', 'uploaded'.
 those elements have the following types:
   - filename (character; required)
-  - ext (character; optional)
+  - ext (character; required)
   - selectedvalue (character; required)
   - chain (character; required)
   - range (character; required)
