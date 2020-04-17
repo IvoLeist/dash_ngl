@@ -28,6 +28,19 @@ color_list = [
     "#999999",
 ]
 
+representations = [
+    'ball+stick',
+    'cartoon',
+    'licorice',
+    'line',
+    'ribbon',
+    'rope',
+    'spacefill',
+    'surface',
+    'trace',
+    'tube'
+]
+
 # PDB examples
 # . indicates that only one chain should be shown
 # _ indicates that more than one protein should be shown
@@ -124,14 +137,34 @@ data_tab = [
 
 view_tab = [
     html.Div(
+        title="select molecule style",
+        className="app-controls-block",
+        id="ngl-mols-style",
+        children=[
+            html.P(
+                "Style",
+                style={"font-weight": "bold", "margin-bottom": "10px"},
+            ),
+            dcc.Dropdown(
+                id="molecules-represetation-style",
+                options=[{"label": e, "value": e.lower()} for e in representations],
+                value="cartoon",
+            ),
+        ],
+    ),
+    html.Div(
         title="select chain color",
         className="app-controls-block",
         id="ngl-mols-color",
         children=[
             html.P(
-                "Chain colors", style={"font-weight": "bold", "margin-bottom": "10px",},
+                "Chain colors",
+                style={"font-weight": "bold", "margin-bottom": "10px"},
             ),
-            dcc.Input(id="molecules-chain-color", value=",".join(color_list),),
+            dcc.Input(
+                id="molecules-chain-color",
+                value=",".join(color_list)
+            ),
         ],
     ),
     html.Div(
@@ -141,11 +174,11 @@ view_tab = [
         children=[
             html.P(
                 "Background color",
-                style={"font-weight": "bold", "margin-bottom": "10px",},
+                style={"font-weight": "bold", "margin-bottom": "10px"},
             ),
             dcc.Dropdown(
                 id="stage-bg-color",
-                options=[{"label": c, "value": c.lower()} for c in ["black", "white",]],
+                options=[{"label": e, "value": e.lower()} for e in ["black", "white"]],
                 value="white",
             ),
         ],
@@ -162,8 +195,8 @@ view_tab = [
             dcc.Dropdown(
                 id="stage-camera-type",
                 options=[
-                    {"label": k.capitalize(), "value": k,}
-                    for k in ["perspective", "orthographic",]
+                    {"label": e.capitalize(), "value": e}
+                    for e in ["perspective", "orthographic"]
                 ],
                 value="perspective",
             ),
@@ -181,8 +214,8 @@ view_tab = [
             dcc.Dropdown(
                 id="stage-render-quality",
                 options=[
-                    {"label": c, "value": c.lower(),}
-                    for c in ["auto", "low", "medium", "high",]
+                    {"label": e, "value": e.lower(),}
+                    for e in ["auto", "low", "medium", "high",]
                 ],
                 value="auto",
             ),
@@ -237,15 +270,6 @@ download_tab = [
         ],
     ),
 ]
-
-# tage.makeImage({
-#       factor: 1,
-#       antialias: true,
-#       trim: false,
-#       transparent: false
-#     }).then(function( blob ){
-#         console.log(blob)
-#         download( blob, "screenshot.png" );
 
 
 tabs = html.Div(
@@ -311,6 +335,7 @@ app.layout = html.Div(
 
 def createDict(
     selection,
+    mol_style,
     chain,
     aa_range,
     color,
@@ -334,9 +359,9 @@ def createDict(
 
 
 # Helper function to load structures from local storage
-def getLocalData(selection, pdb_id, color, uploadedFiles, resetView=False):
+def getLocalData(selection, mol_style, pdb_id, color, uploadedFiles, resetView=False):
 
-    chain = ("ALL",)
+    chain = "ALL"
     aa_range = "ALL"
 
     # Check if only one chain should be shown
@@ -357,6 +382,7 @@ def getLocalData(selection, pdb_id, color, uploadedFiles, resetView=False):
             content = ""
             return createDict(
                 selection,
+                mol_style,
                 chain,
                 aa_range,
                 color,
@@ -384,6 +410,7 @@ def getLocalData(selection, pdb_id, color, uploadedFiles, resetView=False):
 
     return createDict(
         selection,
+        mol_style,
         chain,
         aa_range,
         color,
@@ -396,7 +423,7 @@ def getLocalData(selection, pdb_id, color, uploadedFiles, resetView=False):
 
 
 # Helper function to load structures from uploaded content
-def getUploadedData(uploaded_content):
+def getUploadedData(uploaded_content, mol_style):
     data = []
     uploads = []
 
@@ -426,6 +453,7 @@ def getUploadedData(uploaded_content):
         data.append(
             createDict(
                 pdb_id,
+                mol_style,
                 chain,
                 aa_range,
                 color_list[i],
@@ -444,16 +472,19 @@ def getUploadedData(uploaded_content):
 @app.callback(
     [
         Output(component_id, "data"),
+        Output(component_id, "molStyle"), 
         Output("pdb-dropdown", "options"),
         Output("uploaded-files", "children"),
         Output("pdb-dropdown", "placeholder"),
         Output("warning_div", "children"),
+
     ],
     [
         Input("pdb-dropdown", "value"),
         Input("ngl-upload-data", "contents"),
         Input("btn-pdbString", "n_clicks"),
         Input("btn-resetView", "n_clicks"),
+        Input("molecules-represetation-style", "value"), 
     ],
     [
         State("pdb-string", "value"),
@@ -467,19 +498,20 @@ def display_output(
     uploaded_content,
     pdbString_clicks,
     resetView_clicks,
+    mol_style,
     pdbString,
     dropdown_options,
     files,
-    colors,
+    colors
 ):
     print("selection,pdbString_clicks,pdbString,type uploaded_content", "files")
-    print(selection, pdbString_clicks, pdbString, type(uploaded_content), type(files))
+    print(selection, mol_style, pdbString_clicks, pdbString, type(uploaded_content), type(files))
 
     input_id = None
     options = dropdown_options
     colors_list = colors.split(",")
     files = files["props"]["children"] if isinstance(files, dict) else "".join(files)
-    print(files)
+    print("files", files)
 
     ctx = dash.callback_context
     if ctx.triggered:
@@ -488,11 +520,10 @@ def display_output(
     print("triggred", input_id)
 
     if input_id is None:
-        return [data_dict], options, files, no_update, no_update
+        return [data_dict], mol_style, options, files, no_update, no_update
 
     if input_id == "pdb-dropdown":
         print("dropdown changed")
-        print(files)
         pdb_id = selection
 
         if pdb_id in files:
@@ -508,6 +539,7 @@ def display_output(
                 [
                     createDict(
                         pdb_id,
+                        mol_style,
                         chain,
                         aa_range,
                         colors_list[0],
@@ -518,19 +550,23 @@ def display_output(
                         uploaded=False,
                     )
                 ],
+                mol_style,
                 options,
                 files,
+                no_update,
+                no_update
             )
 
-        data = [getLocalData(selection, pdb_id, color_list[0], files, resetView=False)]
-        return data, options, files, no_update, no_update
+        data = [getLocalData(selection, mol_style, pdb_id, color_list[0], files, resetView=False)]
+        return data, mol_style, options, files, no_update, no_update
 
     # TODO submit and reset view in one button
+    # reset view/submit is triggered two times when the mol style is changed
     if input_id in ["btn-pdbString", "btn-resetView"]:
         warning = ""
 
         if pdbString is None:
-            return no_update, no_update, no_update, no_update, no_update
+            return no_update, no_update, no_update, no_update, no_update, no_update
 
         resetView = False
         if input_id == "btn-resetView":
@@ -545,6 +581,7 @@ def display_output(
                         data.append(
                             getLocalData(
                                 pdbString,
+                                mol_style,
                                 pdb_id,
                                 color_list[i],
                                 files,
@@ -560,16 +597,16 @@ def display_output(
             else:
                 data.append(
                     getLocalData(
-                        pdbString, pdb_id, color_list[0], files, resetView=resetView
+                        pdbString, mol_style, pdb_id, color_list[0], files, resetView=resetView
                     )
                 )
         else:
             data.append(data_dict)
 
-        return data, options, files, "Select a molecule", warning
+        return data, mol_style, options, files, "Select a molecule", warning
 
     if input_id == "ngl-upload-data":
-        data, uploads = getUploadedData(uploaded_content)
+        data, uploads = getUploadedData(uploaded_content, mol_style)
 
         for pdb_id, ext in [e.split(".") for e in uploads]:
             if pdb_id not in [e["label"] for e in options]:
@@ -577,10 +614,12 @@ def display_output(
                 print("uploaded", pdb_id)
                 files += pdb_id + "." + ext + ","
 
-        return data, options, files, pdb_id, no_update
+        return data, mol_style, options, files, pdb_id, no_update
 
+    if input_id == "molecules-represetation-style":
+        return no_update, mol_style, no_update, no_update, no_update, no_update
 
-# CB stage settings
+# CB change molecule representation
 @app.callback(
     Output(component_id, "stageParameters"),
     [
@@ -597,9 +636,8 @@ def update_stage(bgcolor, camera_type, quality):
     }
 
 
-bool_dict = {"Yes": True, "No": False}
-
 # CB download Image
+bool_dict = {"Yes": True, "No": False}
 @app.callback(
     [Output(component_id, "downloadImage"), 
      Output(component_id, "imageParameters")],
