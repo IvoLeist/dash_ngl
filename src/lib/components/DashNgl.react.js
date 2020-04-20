@@ -155,7 +155,7 @@ export default class DashNgl extends Component {
     molStyles.forEach(molStyle => {
       let repr = molStyle
       if (molStyle === 'axes+box') {
-        // This is not a ngl supported moleculuar representation
+        // This is not a ngl provided moleculuar representation
         // but a combination of repr: 'axes' and showBox = true 
         repr = 'axes'
       }

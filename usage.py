@@ -35,6 +35,8 @@ representations = [
     'box',
     'ball+stick',
     'cartoon',
+    'helixorient',
+    'hyperball',
     'licorice',
     'line',
     'ribbon',
@@ -43,7 +45,7 @@ representations = [
     'surface',
     'trace',
     'tube',
-    'unitcell'
+    'unitcell',
 ]
 
 # PDB examples
