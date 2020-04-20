@@ -30,6 +30,7 @@ color_list = [
 
 representations = [
     'axes',
+    'axes+box',
     'backbone',
     'box',
     'ball+stick',
@@ -152,7 +153,7 @@ view_tab = [
                 id="molecules-represetation-style",
                 options=[{"label": e, "value": e.lower()} for e in representations],
                 placeholder="select molecule style",
-                value=['cartoon', 'axes', 'box'],
+                value=['cartoon', 'axes+box'],
                 multi=True
             ),
         ],

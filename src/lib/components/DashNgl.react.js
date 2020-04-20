@@ -124,7 +124,7 @@ export default class DashNgl extends Component {
     }
   }
   
-  // helper function
+  // helper function for generating an 
   generateImage(stage) {
     const {imageParameters} = this.props
     console.log('generate image')
@@ -137,15 +137,15 @@ export default class DashNgl extends Component {
       transparent: imageParameters.transparent
     }).then(function( blob ){
         console.log(blob)
-        download( blob, "screenshot.png" );
+        download( blob, "dashNGL_output.png" );
     });
   }
 
-  //helper function:
+  //helper function for adding one or multiple molecular representaions
   addMolStyle (struc,molStyles,sele,color) {
     let args = {
       sele: sele,
-      showBox: molStyles.includes('box')
+      showBox: molStyles.includes('axes+box')
     }
 
     if (sele !== ':'){
@@ -153,9 +153,13 @@ export default class DashNgl extends Component {
     }
 
     molStyles.forEach(molStyle => {
-      if (molStyle !== 'box'){
-        struc.addRepresentation(molStyle, args)
+      let repr = molStyle
+      if (molStyle === 'axes+box') {
+        // This is not a ngl supported moleculuar representation
+        // but a combination of repr: 'axes' and showBox = true 
+        repr = 'axes'
       }
+      struc.addRepresentation(repr, args)
     })
   }
 
