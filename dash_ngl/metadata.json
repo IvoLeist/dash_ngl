@@ -16,6 +16,30 @@
         "returns": null
       },
       {
+        "name": "addMolStyle",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "struc",
+            "type": null
+          },
+          {
+            "name": "molStyles",
+            "type": null
+          },
+          {
+            "name": "sele",
+            "type": null
+          },
+          {
+            "name": "color",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
         "name": "showStructure",
         "docblock": null,
         "modifiers": [],
@@ -25,7 +49,7 @@
             "type": null
           },
           {
-            "name": "molStyle",
+            "name": "molStyles",
             "type": null
           },
           {
@@ -65,7 +89,7 @@
             "type": null
           },
           {
-            "name": "molStyle",
+            "name": "molStyles",
             "type": null
           },
           {
@@ -97,7 +121,7 @@
             "type": null
           },
           {
-            "name": "molStyle",
+            "name": "molStyles",
             "type": null
           },
           {
@@ -121,7 +145,7 @@
             "type": null
           },
           {
-            "name": "molStyle",
+            "name": "molStyles",
             "type": null
           },
           {
@@ -285,15 +309,18 @@
           }
         },
         "required": false,
-        "description": "The data (in JSON format) that will be used to display the molecule\nfilename: name of the used pdb/cif file\next: file extensions (pdb or cif)\nselectedValue: pdbString\nmolStyle: selected molecule representation (cartoon, stick, sphere)\nchain: selected chain\nrange: selected range\ncolor: color in hex format\nconfig.input: content of the pdb file\nconfig.type: format of config.input\nresetView: bool if the view should be resettet\nuploaded: bool if the file was uploaded",
+        "description": "The data (in JSON format) that will be used to display the molecule\nfilename: name of the used pdb/cif file\next: file extensions (pdb or cif)\nselectedValue: pdbString\nmolStyles: selected molecule representation (cartoon, stick, sphere)\nchain: selected chain\nrange: selected range\ncolor: color in hex format\nconfig.input: content of the pdb file\nconfig.type: format of config.input\nresetView: bool if the view should be resettet\nuploaded: bool if the file was uploaded",
         "defaultValue": {
           "value": "[{\n  uploaded: true,\n  selectedValue: 'placeholder',\n  resetView: false,\n  chain: 'ALL',\n  range: 'ALL',\n  color: 'red',\n  filename: 'placeholder',\n  ext: '',\n  config: {\n    type: 'text/plain',\n    input: ''\n  }\n}]",
           "computed": false
         }
       },
-      "molStyle": {
+      "molStyles": {
         "type": {
-          "name": "string"
+          "name": "arrayOf",
+          "value": {
+            "name": "string"
+          }
         },
         "required": false,
         "description": "Variable for changing the molecule representation\nSelection of possible molecule styles:\n    'ball+stick','cartoon','licorice',\n    'line','ribbon','rope','spacefill',\n    'surface','trace','tube'",

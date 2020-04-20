@@ -29,6 +29,9 @@ color_list = [
 ]
 
 representations = [
+    'axes',
+    'backbone',
+    'box',
     'ball+stick',
     'cartoon',
     'licorice',
@@ -38,7 +41,8 @@ representations = [
     'spacefill',
     'surface',
     'trace',
-    'tube'
+    'tube',
+    'unitcell'
 ]
 
 # PDB examples
@@ -104,8 +108,7 @@ data_tab = [
         id="pdb-dropdown",
         clearable=False,
         options=[{"label": k, "value": k} for k in pdbs_list],
-        value="1BNA",
-        placeholder="placeholder",
+        placeholder="Select a molecule",
     ),
     html.Div(
         className="app-controls-name",
@@ -148,7 +151,9 @@ view_tab = [
             dcc.Dropdown(
                 id="molecules-represetation-style",
                 options=[{"label": e, "value": e.lower()} for e in representations],
-                value="cartoon",
+                placeholder="select molecule style",
+                value=['cartoon', 'axes', 'box'],
+                multi=True
             ),
         ],
     ),
@@ -472,7 +477,7 @@ def getUploadedData(uploaded_content, mol_style):
 @app.callback(
     [
         Output(component_id, "data"),
-        Output(component_id, "molStyle"), 
+        Output(component_id, "molStyles"),
         Output("pdb-dropdown", "options"),
         Output("uploaded-files", "children"),
         Output("pdb-dropdown", "placeholder"),
@@ -639,7 +644,7 @@ def update_stage(bgcolor, camera_type, quality):
 # CB download Image
 bool_dict = {"Yes": True, "No": False}
 @app.callback(
-    [Output(component_id, "downloadImage"), 
+    [Output(component_id, "downloadImage"),
      Output(component_id, "imageParameters")],
     [Input("btn-downloadImage", "n_clicks")],
     [

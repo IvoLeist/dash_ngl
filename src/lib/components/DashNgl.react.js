@@ -35,7 +35,7 @@ export default class DashNgl extends Component {
 
   // triggered by any update of the DOM (e.g. new dropdown selection)
   shouldComponentUpdate (prevProps, nextProps) {
-    const { stageParameters, data, downloadImage, molStyle } = this.props
+    const { stageParameters, data, downloadImage, molStyles } = this.props
     console.log(data)
 
     // check if data has changed
@@ -72,8 +72,8 @@ export default class DashNgl extends Component {
       }
     } 
 
-    // check if molstyle has been changed
-    if (prevProps.molStyle !== molStyle){
+    // check if molStyles has been changed
+    if (!equals(prevProps.molStyles,molStyles)){
         console.log("mol style has been changed")
         return true
       }
@@ -100,10 +100,10 @@ export default class DashNgl extends Component {
   // called only if shouldComponentUpdate evaluates to true
   componentDidUpdate () {
     console.log('updated')
-    const { stageParameters, data, downloadImage, molStyle } = this.props
+    const { stageParameters, data, downloadImage, molStyles } = this.props
     const { stage, structuresList } = this.state
     console.log(downloadImage)
-    console.log(molStyle)
+    console.log(molStyles)
     const newSelection = data[0].selectedValue
 
     stage.setParameters(stageParameters)
@@ -116,20 +116,20 @@ export default class DashNgl extends Component {
       stage.eachComponent(function (comp) {
         comp.removeAllRepresentations()
       })
-      this.processDataFromBackend(data, molStyle, stage, structuresList)
+      this.processDataFromBackend(data, molStyles, stage, structuresList)
     }
 
     if (downloadImage === true){
       this.generateImage(stage)
     }
   }
-
+  
   // helper function
   generateImage(stage) {
     const {imageParameters} = this.props
     console.log('generate image')
     console.log(stage)
-
+    
     stage.makeImage({
       factor: 1,
       antialias: imageParameters.antialias,
@@ -141,19 +141,44 @@ export default class DashNgl extends Component {
     });
   }
 
+  //helper function:
+  addMolStyle (struc,molStyles,sele,color) {
+    let args = {
+      sele: sele,
+      showBox: molStyles.includes('box')
+    }
+
+    if (sele !== ':'){
+      args['color'] = color
+    }
+
+    molStyles.forEach(molStyle => {
+      if (molStyle !== 'box'){
+        struc.addRepresentation(molStyle, args)
+      }
+    })
+  }
+
   // helper functions which styles the output of loadStructure/loadData
-  showStructure (stageObj, molStyle, chain, range, color, xOffset, stage) {
+  showStructure (stageObj, molStyles, chain, range, color, xOffset, stage) {
     
     const { orientationMatrix } = this.state
+    const newZoom = -500
+    const duration = 1000
+    let sele = ':'
+    
     console.log("orientation Matrix")
     console.log(orientationMatrix)
     stage.viewerControls.orient(orientationMatrix);
 
-    if (chain !== 'ALL') {
-      
-      let sele = ':' + chain
+    console.log(molStyles)
+
+    if (chain == 'ALL'){
+      this.addMolStyle(stageObj,molStyles,sele,color)
+    } else {
+      sele += chain
       if (range !== 'ALL') {
-        sele = sele + ' and ' + range
+        sele += ' and ' + range
         console.log (sele)
       }
 
@@ -171,23 +196,11 @@ export default class DashNgl extends Component {
       )
           
       struc.setRotation(pa.getRotationQuaternion())
-
-      struc.addRepresentation(molStyle, {
-        sele: sele,
-        color: color
-      })
-      // comp.addRepresentation( "axes",{
-      //   sele: ":"+chain,
-      //   showBox: true
-      // })
-    } else {
-      stageObj.addRepresentation(molStyle)
-    }
+      this.addMolStyle(struc,molStyles, sele, color)
+    } 
     
     //stage.animationControls.moveComponent(stageObj, stageObj.getCenter(), 1000)
     //const center = stage.getCenter()
-    const newZoom = -500
-    const duration = 1000
     stage.animationControls.zoom(newZoom, duration)
     //stage.animationControls.zoomMove(center, newZoom, duration)
 
@@ -195,15 +208,15 @@ export default class DashNgl extends Component {
   }
 
   // If user has selected structure already just add the new Representation
-  loadStructure (stage, filename, molStyle, chain, range, color, xOffset) {
+  loadStructure (stage, filename, molStyles, chain, range, color, xOffset) {
     console.log('load from browser')
     // console.log(filename)
     const stageObj = stage.getComponentsByName(filename).list[0]
-    this.showStructure(stageObj, molStyle, chain, range, color, xOffset, stage)
+    this.showStructure(stageObj, molStyles, chain, range, color, xOffset, stage)
   }
 
   // If not load the structure from the backend
-  processDataFromBackend (data, molStyle, stage, structuresList) {
+  processDataFromBackend (data, molStyles, stage, structuresList) {
     console.log('processDataFromBackend')
 
     // loop over list of structures:
@@ -215,13 +228,13 @@ export default class DashNgl extends Component {
       if (structuresList.includes(filename)) {
         this.loadStructure(stage,
           filename,
-          molStyle,
+          molStyles,
           data[i].chain,
           data[i].range,
           data[i].color,
           xOffset)
       } else { // load from backend
-        this.loadData(data[i], molStyle, stage, xOffset)
+        this.loadData(data[i], molStyles, stage, xOffset)
       }
     }
     // const center = stage.getCenter()
@@ -259,14 +272,14 @@ export default class DashNgl extends Component {
     // console.log(orientationMatrix2)
   }
 
-  loadData (data, molStyle, stage, xOffset) {
+  loadData (data, molStyles, stage, xOffset) {
     console.log('load from backend')
     const stringBlob = new Blob([data.config.input], { type: data.config.type })
     stage.loadFile(stringBlob, { ext: data.ext, defaultRepresentation: false }).then(stageObj => {
       stageObj.name = data.filename
       this.showStructure(
         stageObj,
-        molStyle,
+        molStyles,
         data.chain,
         data.range,
         data.color,
@@ -329,7 +342,7 @@ DashNgl.defaultProps = {
   viewportStyle: defaultViewportStyle,
   stageParameters: defaultStageParameters,
   imageParameters: defaultImageParameters,
-  molStyle:'cartoon'
+  molStyles:'cartoon'
 }
 
 DashNgl.propTypes = {
@@ -391,7 +404,7 @@ DashNgl.propTypes = {
    * filename: name of the used pdb/cif file
    * ext: file extensions (pdb or cif)
    * selectedValue: pdbString
-   * molStyle: selected molecule representation (cartoon, stick, sphere)
+   * molStyles: selected molecule representation (cartoon, stick, sphere)
    * chain: selected chain
    * range: selected range
    * color: color in hex format
@@ -423,5 +436,5 @@ DashNgl.propTypes = {
     'line','ribbon','rope','spacefill',
     'surface','trace','tube'
    */
-  molStyle: PropTypes.string,
+  molStyles: PropTypes.arrayOf(PropTypes.string)
 }

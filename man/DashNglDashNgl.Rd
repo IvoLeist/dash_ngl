@@ -11,7 +11,7 @@ The NglMoleculeViewer is used to render schematic diagrams of biomolecules in ri
 
 \usage{
 DashNglDashNgl(id=NULL, viewportStyle=NULL, stageParameters=NULL, imageParameters=NULL,
-downloadImage=NULL, pdbString=NULL, data=NULL, molStyle=NULL)
+downloadImage=NULL, pdbString=NULL, data=NULL, molStyles=NULL)
 }
 
 \arguments{
@@ -67,7 +67,7 @@ those elements have the following types:
 filename: name of the used pdb/cif file
 ext: file extensions (pdb or cif)
 selectedValue: pdbString
-molStyle: selected molecule representation (cartoon, stick, sphere)
+molStyles: selected molecule representation (cartoon, stick, sphere)
 chain: selected chain
 range: selected range
 color: color in hex format
@@ -76,7 +76,7 @@ config.type: format of config.input
 resetView: bool if the view should be resettet
 uploaded: bool if the file was uploaded}
 
-\item{molStyle}{Character. Variable for changing the molecule representation
+\item{molStyles}{List of characters. Variable for changing the molecule representation
 Selection of possible molecule styles:
     'ball+stick','cartoon','licorice',
     'line','ribbon','rope','spacefill',
