@@ -79,11 +79,7 @@ export default class DashNgl extends Component {
       }
 
     // check for stage params changed
-    const oldStage = prevProps.stageParameters
-    const newStage = stageParameters
-    console.log({ oldStage, newStage })
-
-    if (!equals(oldStage, newStage)) {
+    if (!equals(prevProps.stageParameters, stageParameters)) {
             return true
         }
 
@@ -111,22 +107,26 @@ export default class DashNgl extends Component {
     console.log({ data, stageParameters })
     console.log(structuresList)
 
-    if (downloadImage === false && newSelection !== 'placeholder') {
-      // console.log(newSelection)
-      stage.eachComponent(function (comp) {
-        comp.removeAllRepresentations()
-      })
-      this.processDataFromBackend(data, molStyles, stage, structuresList)
+    if (
+      downloadImage === undefined ||
+      (downloadImage === false && newSelection !== 'placeholder') 
+    ) { 
+        // console.log(newSelection)
+        stage.eachComponent(function (comp) {
+          comp.removeAllRepresentations()
+        })
+        this.processDataFromBackend(data, molStyles, structuresList)
     }
 
     if (downloadImage === true){
-      this.generateImage(stage)
+      this.generateImage()
     }
   }
   
   // helper function for generating an 
-  generateImage(stage) {
-    const {imageParameters} = this.props
+  generateImage() {
+    const { imageParameters } = this.props
+    const { stage } = this.state
     console.log('generate image')
     console.log(stage)
     
@@ -142,43 +142,72 @@ export default class DashNgl extends Component {
   }
 
   //helper function for adding one or multiple molecular representaions
-  addMolStyle (struc,molStyles,sele,color) {
+  addMolStyle (struc,molStyles,sele, selectedAA, color) {
+    let reprs = molStyles
     let args = {
       sele: sele,
       showBox: molStyles.includes('axes+box')
     }
 
+    if (selectedAA !== ''){
+      reprs.push(selectedAA)
+    }
+
+    
     if (sele !== ':'){
       args['color'] = color
     }
 
-    molStyles.forEach(molStyle => {
-      let repr = molStyle
-      if (molStyle === 'axes+box') {
+    console.log(reprs)
+    reprs.forEach(e => {
+      let repr = e
+      console.log("repr")
+      console.log(repr)
+      console.log('args')
+      console.log(args)
+      if (repr === 'axes+box') {
         // This is not a ngl provided moleculuar representation
         // but a combination of repr: 'axes' and showBox = true 
         repr = 'axes'
       }
+
+      if (repr === selectedAA){
+        repr = 'ball+stick'
+        args['sele'] += ' and @' + selectedAA 
+        args['radius'] = 1
+        args['color'] = "#ffffff" 
+        console.log(args)
+      }
+
+
       struc.addRepresentation(repr, args)
     })
+
+    // if (sele.includes('@')) {
+    //   struc.addRepresentation( "ball+stick",{
+    //       sele: sele,
+    //       radius: 1,
+    //       colorValue: "#ffffff"
+    //   })
+    // }
   }
 
   // helper functions which styles the output of loadStructure/loadData
-  showStructure (stageObj, molStyles, chain, range, color, xOffset, stage) {
-    
-    const { orientationMatrix } = this.state
+  showStructure (stageObj, molStyles, chain, range, selectedAA, color, xOffset) {
+    const { stage, orientationMatrix } = this.state
     const newZoom = -500
     const duration = 1000
     let sele = ':'
-    
+
+    console.log(selectedAA)
     console.log("orientation Matrix")
     console.log(orientationMatrix)
     stage.viewerControls.orient(orientationMatrix);
 
     console.log(molStyles)
 
-    if (chain == 'ALL'){
-      this.addMolStyle(stageObj,molStyles,sele,color)
+    if (chain === 'ALL'){
+      this.addMolStyle(stageObj,molStyles,sele, selectedAA, color)
     } else {
       sele += chain
       if (range !== 'ALL') {
@@ -200,7 +229,16 @@ export default class DashNgl extends Component {
       )
           
       struc.setRotation(pa.getRotationQuaternion())
-      this.addMolStyle(struc,molStyles, sele, color)
+      
+      // if (sele.includes('@')) {
+      //   struc.addRepresentation( "ball+stick",{
+      //       sele: sele,
+      //       radius: 1,
+      //       colorValue: "#ffffff"
+      //   })
+      // }
+    
+      this.addMolStyle(struc,molStyles, sele, selectedAA, color)
     } 
     
     //stage.animationControls.moveComponent(stageObj, stageObj.getCenter(), 1000)
@@ -211,34 +249,36 @@ export default class DashNgl extends Component {
     // stage.autoView()
   }
 
-  // If user has selected structure already just add the new Representation
-  loadStructure (stage, filename, molStyles, chain, range, color, xOffset) {
-    console.log('load from browser')
-    // console.log(filename)
-    const stageObj = stage.getComponentsByName(filename).list[0]
-    this.showStructure(stageObj, molStyles, chain, range, color, xOffset, stage)
-  }
-
+  // loadStructure (stage, filename, molStyles, chain, range, color, xOffset) {
+  //   console.log('load from browser')
+  //   // console.log(filename)
+  //   const stageObj = stage.getComponentsByName(filename).list[0]
+  //   this.showStructure(stageObj, molStyles, chain, range, color, xOffset, stage)
+  // }
+  
   // If not load the structure from the backend
-  processDataFromBackend (data, molStyles, stage, structuresList) {
+  processDataFromBackend (data, molStyles, structuresList) {
+    const { stage } = this.state
     console.log('processDataFromBackend')
-
+    
     // loop over list of structures:
     for (var i = 0; i < data.length; i++) {
       const filename = data[i].filename
       const xOffset = i * 100
-
+      
       // check if already loaded
       if (structuresList.includes(filename)) {
-        this.loadStructure(stage,
-          filename,
+        // If user has selected structure already just add the new Representation
+        this.showStructure(
+          stage.getComponentsByName(filename).list[0],
           molStyles,
           data[i].chain,
           data[i].range,
+          data[i].selectedAA,
           data[i].color,
           xOffset)
       } else { // load from backend
-        this.loadData(data[i], molStyles, stage, xOffset)
+        this.loadData(data[i], molStyles, xOffset)
       }
     }
     // const center = stage.getCenter()
@@ -276,9 +316,11 @@ export default class DashNgl extends Component {
     // console.log(orientationMatrix2)
   }
 
-  loadData (data, molStyles, stage, xOffset) {
+  loadData (data, molStyles, xOffset) {
     console.log('load from backend')
+    const {stage} = this.state
     const stringBlob = new Blob([data.config.input], { type: data.config.type })
+    
     stage.loadFile(stringBlob, { ext: data.ext, defaultRepresentation: false }).then(stageObj => {
       stageObj.name = data.filename
       this.showStructure(
@@ -286,9 +328,9 @@ export default class DashNgl extends Component {
         molStyles,
         data.chain,
         data.range,
+        data.selectedAA,
         data.color,
-        xOffset,
-        stage
+        xOffset
       )
 
       this.setState(state => ({
@@ -330,6 +372,7 @@ const defaultData = [{
   resetView: false,
   chain: 'ALL',
   range: 'ALL',
+  selectedAA: '',
   color: 'red',
   filename: 'placeholder',
   ext: '',
@@ -346,7 +389,7 @@ DashNgl.defaultProps = {
   viewportStyle: defaultViewportStyle,
   stageParameters: defaultStageParameters,
   imageParameters: defaultImageParameters,
-  molStyles:'cartoon'
+  molStyles:['cartoon','axes+box']
 }
 
 DashNgl.propTypes = {
@@ -424,6 +467,7 @@ DashNgl.propTypes = {
       selectedValue: PropTypes.string.isRequired,
       chain: PropTypes.string.isRequired,
       range: PropTypes.string.isRequired,
+      selectedAA:PropTypes.string,
       color: PropTypes.string.isRequired,
       config: PropTypes.exact({
         type: PropTypes.string.isRequired,

@@ -57,6 +57,7 @@ pdbID1.chain:start-end_pdbID2.chain:start-end
   resetView: false,
   chain: 'ALL',
   range: 'ALL',
+  selectedAA: '',
   color: 'red',
   filename: 'placeholder',
   ext: '',
@@ -75,13 +76,14 @@ color: color in hex format
 config.input: content of the pdb file
 config.type: format of config.input
 resetView: bool if the view should be resettet
-uploaded: bool if the file was uploaded. data has the following type: list of dicts containing keys 'filename', 'ext', 'selectedValue', 'chain', 'range', 'color', 'config', 'resetView', 'uploaded'.
+uploaded: bool if the file was uploaded. data has the following type: list of dicts containing keys 'filename', 'ext', 'selectedValue', 'chain', 'range', 'selectedAA', 'color', 'config', 'resetView', 'uploaded'.
 Those keys have the following types:
   - filename (string; required)
   - ext (string; required)
   - selectedValue (string; required)
   - chain (string; required)
   - range (string; required)
+  - selectedAA (string; optional)
   - color (string; required)
   - config (dict; optional): config has the following type: dict containing keys 'type', 'input'.
 Those keys have the following types:
@@ -89,7 +91,7 @@ Those keys have the following types:
   - input (string; required)
   - resetView (boolean; required)
   - uploaded (boolean; required)
-- molStyles (list of strings; default 'cartoon'): Variable for changing the molecule representation
+- molStyles (list of strings; default ['cartoon','axes+box']): Variable for changing the molecule representation
 Selection of possible molecule styles:
     'ball+stick','cartoon','licorice',
     'line','ribbon','rope','spacefill',
