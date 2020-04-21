@@ -57,7 +57,7 @@ pdbID1.chain:start-end_pdbID2.chain:start-end
   resetView: false,
   chain: 'ALL',
   range: 'ALL',
-  selectedAA: '',
+  selectedAtoms: '',
   color: 'red',
   filename: 'placeholder',
   ext: '',

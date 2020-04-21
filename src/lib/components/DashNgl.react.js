@@ -142,15 +142,15 @@ export default class DashNgl extends Component {
   }
 
   //helper function for adding one or multiple molecular representaions
-  addMolStyle (struc,molStyles,sele, selectedAA, color) {
+  addMolStyle (struc,molStyles,sele, selectedAtoms, color) {
     let reprs = molStyles
     let args = {
       sele: sele,
       showBox: molStyles.includes('axes+box')
     }
 
-    if (selectedAA !== ''){
-      reprs.push(selectedAA)
+    if (selectedAtoms !== ''){
+      reprs.push(selectedAtoms)
     }
 
     
@@ -171,9 +171,9 @@ export default class DashNgl extends Component {
         repr = 'axes'
       }
 
-      if (repr === selectedAA){
+      if (repr === selectedAtoms){
         repr = 'ball+stick'
-        args['sele'] += ' and @' + selectedAA 
+        args['sele'] += ' and @' + selectedAtoms 
         args['radius'] = 1
         args['color'] = "#ffffff" 
         console.log(args)
@@ -193,13 +193,13 @@ export default class DashNgl extends Component {
   }
 
   // helper functions which styles the output of loadStructure/loadData
-  showStructure (stageObj, molStyles, chain, range, selectedAA, color, xOffset) {
+  showStructure (stageObj, molStyles, chain, range, selectedAtoms, color, xOffset) {
     const { stage, orientationMatrix } = this.state
     const newZoom = -500
     const duration = 1000
     let sele = ':'
 
-    console.log(selectedAA)
+    console.log(selectedAtoms)
     console.log("orientation Matrix")
     console.log(orientationMatrix)
     stage.viewerControls.orient(orientationMatrix);
@@ -207,7 +207,7 @@ export default class DashNgl extends Component {
     console.log(molStyles)
 
     if (chain === 'ALL'){
-      this.addMolStyle(stageObj,molStyles,sele, selectedAA, color)
+      this.addMolStyle(stageObj,molStyles,sele, selectedAtoms, color)
     } else {
       sele += chain
       if (range !== 'ALL') {
@@ -238,7 +238,7 @@ export default class DashNgl extends Component {
       //   })
       // }
     
-      this.addMolStyle(struc,molStyles, sele, selectedAA, color)
+      this.addMolStyle(struc,molStyles, sele, selectedAtoms, color)
     } 
     
     //stage.animationControls.moveComponent(stageObj, stageObj.getCenter(), 1000)
@@ -274,7 +274,7 @@ export default class DashNgl extends Component {
           molStyles,
           data[i].chain,
           data[i].range,
-          data[i].selectedAA,
+          data[i].selectedAtoms,
           data[i].color,
           xOffset)
       } else { // load from backend
@@ -328,7 +328,7 @@ export default class DashNgl extends Component {
         molStyles,
         data.chain,
         data.range,
-        data.selectedAA,
+        data.selectedAtoms,
         data.color,
         xOffset
       )
@@ -372,7 +372,7 @@ const defaultData = [{
   resetView: false,
   chain: 'ALL',
   range: 'ALL',
-  selectedAA: '',
+  selectedAtoms: '',
   color: 'red',
   filename: 'placeholder',
   ext: '',
