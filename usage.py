@@ -122,7 +122,7 @@ data_tab = [
     dcc.Input(
         id='pdb-string',
         placeholder='pdbID1.chain:start-end_pdbID2.chain:start-end',
-        value='6CHG.A:1-450_3K8P.D',
+        value='6CHG.A:1-450@50,100,150_3K8P.D',
         style={'width':'100%'}),
     html.Br(),
     html.Button('submit', id='btn-pdbString'),
