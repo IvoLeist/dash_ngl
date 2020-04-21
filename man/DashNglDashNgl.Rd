@@ -50,14 +50,14 @@ pdbID1.chain:start-end_pdbID2.chain:start-end
 : indicates that a specific range should be shown (e.g. 1-50)
  _ indicates that more than one protein should be shown}
 
-\item{data}{List of lists containing elements 'filename', 'ext', 'selectedvalue', 'chain', 'range', 'selectedaa', 'color', 'config', 'resetview', 'uploaded'.
+\item{data}{List of lists containing elements 'filename', 'ext', 'selectedvalue', 'chain', 'range', 'selectedatoms', 'color', 'config', 'resetview', 'uploaded'.
 those elements have the following types:
   - filename (character; required)
   - ext (character; required)
   - selectedvalue (character; required)
   - chain (character; required)
   - range (character; required)
-  - selectedaa (character; optional)
+  - selectedatoms (character; optional)
   - color (character; required)
   - config (optional): . config has the following type: lists containing elements 'type', 'input'.
 those elements have the following types:
@@ -70,7 +70,7 @@ ext: file extensions (pdb or cif)
 selectedValue: pdbString
 molStyles: selected molecule representation (cartoon, stick, sphere)
 chain: selected chain
-range: selected range
+range: selected atoms range
 color: color in hex format
 config.input: content of the pdb file
 config.type: format of config.input

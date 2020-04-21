@@ -71,19 +71,19 @@ ext: file extensions (pdb or cif)
 selectedValue: pdbString
 molStyles: selected molecule representation (cartoon, stick, sphere)
 chain: selected chain
-range: selected range
+range: selected atoms range
 color: color in hex format
 config.input: content of the pdb file
 config.type: format of config.input
 resetView: bool if the view should be resettet
-uploaded: bool if the file was uploaded. data has the following type: list of dicts containing keys 'filename', 'ext', 'selectedValue', 'chain', 'range', 'selectedAA', 'color', 'config', 'resetView', 'uploaded'.
+uploaded: bool if the file was uploaded. data has the following type: list of dicts containing keys 'filename', 'ext', 'selectedValue', 'chain', 'range', 'selectedAtoms', 'color', 'config', 'resetView', 'uploaded'.
 Those keys have the following types:
   - filename (string; required)
   - ext (string; required)
   - selectedValue (string; required)
   - chain (string; required)
   - range (string; required)
-  - selectedAA (string; optional)
+  - selectedAtoms (string; optional)
   - color (string; required)
   - config (dict; optional): config has the following type: dict containing keys 'type', 'input'.
 Those keys have the following types:

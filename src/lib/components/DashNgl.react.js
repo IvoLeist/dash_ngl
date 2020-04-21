@@ -453,7 +453,7 @@ DashNgl.propTypes = {
    * selectedValue: pdbString
    * molStyles: selected molecule representation (cartoon, stick, sphere)
    * chain: selected chain
-   * range: selected range
+   * range: selected atoms range
    * color: color in hex format
    * config.input: content of the pdb file
    * config.type: format of config.input
@@ -467,7 +467,7 @@ DashNgl.propTypes = {
       selectedValue: PropTypes.string.isRequired,
       chain: PropTypes.string.isRequired,
       range: PropTypes.string.isRequired,
-      selectedAA:PropTypes.string,
+      selectedAtoms:PropTypes.string,
       color: PropTypes.string.isRequired,
       config: PropTypes.exact({
         type: PropTypes.string.isRequired,
