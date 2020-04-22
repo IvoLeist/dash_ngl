@@ -155,7 +155,7 @@ export default class DashNgl extends Component {
 
     
     if (sele !== ':'){
-      args['color'] = color
+      args.color = color
     }
 
     console.log(reprs)
@@ -173,13 +173,11 @@ export default class DashNgl extends Component {
 
       if (repr === selectedAtoms){
         repr = 'ball+stick'
-        args['sele'] += ' and @' + selectedAtoms 
-        args['radius'] = 1
-        args['color'] = "#ffffff" 
+        args.sele += ' and @' + selectedAtoms 
+        args.radius = 1
+        args.color = "#ffffff" 
         console.log(args)
       }
-
-
       struc.addRepresentation(repr, args)
     })
 
@@ -229,15 +227,6 @@ export default class DashNgl extends Component {
       )
           
       struc.setRotation(pa.getRotationQuaternion())
-      
-      // if (sele.includes('@')) {
-      //   struc.addRepresentation( "ball+stick",{
-      //       sele: sele,
-      //       radius: 1,
-      //       colorValue: "#ffffff"
-      //   })
-      // }
-    
       this.addMolStyle(struc,molStyles, sele, selectedAtoms, color)
     } 
     
@@ -389,6 +378,7 @@ DashNgl.defaultProps = {
   viewportStyle: defaultViewportStyle,
   stageParameters: defaultStageParameters,
   imageParameters: defaultImageParameters,
+  downloadImage: false,
   molStyles:['cartoon','axes+box']
 }
 
@@ -439,9 +429,10 @@ DashNgl.propTypes = {
   /**
    * Variable which defines how many molecules should be shown and/or which chain
    * The following format needs to be used:
-   * pdbID1.chain:start-end_pdbID2.chain:start-end
+   * pdbID1.chain:start-end@atom1,atom2_pdbID2.chain:start-end
    * . indicates that only one chain should be shown
    * : indicates that a specific range should be shown (e.g. 1-50)
+   * @ indicates that chosen atoms should be highlighted (e.g. @50,100,150)
    *  _ indicates that more than one protein should be shown
    */
   pdbString: PropTypes.string,
@@ -467,7 +458,7 @@ DashNgl.propTypes = {
       selectedValue: PropTypes.string.isRequired,
       chain: PropTypes.string.isRequired,
       range: PropTypes.string.isRequired,
-      selectedAtoms:PropTypes.string,
+      selectedAtoms:PropTypes.string.isRequired,
       color: PropTypes.string.isRequired,
       config: PropTypes.exact({
         type: PropTypes.string.isRequired,

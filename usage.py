@@ -69,6 +69,7 @@ data_dict = {
     'resetView': False,
     'chain': 'ALL',
     'range': 'ALL',
+    'selectedAtoms':'',
     'color': '#e41a1c',
     'filename': 'placeholder',
     'ext': '',
@@ -84,21 +85,27 @@ viewer = html.Div(
 )
 
 about_html = [
-    html.H4(className='what-is', children='What is Ngl Molecule Viewer?',),
+    html.H4(
+        className='what-is',
+        children='What is Ngl Molecule Viewer?'
+    ),
     html.P(
         'Ngl Molecule Viewer is a visualizer that allows you'
         ' to view biomolecules in multiple representations.'
     ),
     html.P(
-        'You can select a preloaded structure or upload your own in the "Data" tab.'
-    ),
-    html.P('Additionally you can show multiple structures and (or) specify a chain/'
-           ' amino acid range'
+        'You can select a preloaded structure, or upload your own,'
+        ' in the "Data" tab. Supported formats: .pdb(.gz) / .cif(.gz) '
     ),
     html.P(
-        'In the "View" tab, you can change the style and'
-        'coloring of the various components of your molecule.'
+        'Additionally you can show multiple structures and (or) specify a chain/'
+        ' atom range/ highlight chosen atoms.'
     ),
+    html.P(
+        'In the "View" tab, you can change the style of the viewer.'
+        ' Like the background color, the chain colors, the render quality etc.'
+        ' On top you can change the molecular representation.'
+    )
 ]
 
 data_tab = [
@@ -161,7 +168,8 @@ view_tab = [
             ),
             dcc.Dropdown(
                 id='molecules-represetation-style',
-                options=[{'label': e, 'value': e.lower()} for e in representations],
+                options=[{'label': e, 'value': e.lower()}
+                        for e in representations],
                 placeholder='select molecule style',
                 value=['cartoon', 'axes+box'],
                 multi=True
@@ -194,7 +202,8 @@ view_tab = [
             ),
             dcc.Dropdown(
                 id='stage-bg-color',
-                options=[{'label': e, 'value': e.lower()} for e in ['black', 'white']],
+                options=[{'label': e, 'value': e.lower()}
+                        for e in ['black', 'white']],
                 value='white',
             ),
         ],
@@ -231,7 +240,7 @@ view_tab = [
                 id='stage-render-quality',
                 options=[
                     {'label': e, 'value': e.lower(),}
-                    for e in ['auto', 'low', 'medium', 'high',]
+                    for e in ['auto', 'low', 'medium', 'high']
                 ],
                 value='auto',
             ),
@@ -390,12 +399,13 @@ def getLocalData(selection, pdb_id, color, uploadedFiles, resetView=False):
         if ':' in chain:
             chain, atoms_range = chain.split(':')
 
-            # Check if amino acids should be highlighted
+            # Check if atoms should be highlighted
             if '@' in atoms_range:
                 atoms_range, atoms_string = atoms_range.split('@')
-                print(atoms_range)
-                print(atoms_string)
 
+        else:
+            if '@' in chain:
+                chain, atoms_string = chain.split('@')
 
     if pdb_id not in pdbs_list:
         if pdb_id in uploadedFiles:
