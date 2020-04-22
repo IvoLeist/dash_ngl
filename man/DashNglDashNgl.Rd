@@ -45,19 +45,20 @@ those elements have the following types:
 
 \item{pdbString}{Character. Variable which defines how many molecules should be shown and/or which chain
 The following format needs to be used:
-pdbID1.chain:start-end_pdbID2.chain:start-end
+pdbID1.chain:start-end@atom1,atom2_pdbID2.chain:start-end
 . indicates that only one chain should be shown
 : indicates that a specific range should be shown (e.g. 1-50)
+@ indicates that chosen atoms should be highlighted (e.g. @50,100,150)
  _ indicates that more than one protein should be shown}
 
-\item{data}{List of lists containing elements 'filename', 'ext', 'selectedvalue', 'chain', 'range', 'selectedatoms', 'color', 'config', 'resetview', 'uploaded'.
+\item{data}{List of lists containing elements 'filename', 'ext', 'selectedvalue', 'chain', 'range', 'chosenatoms', 'color', 'config', 'resetview', 'uploaded'.
 those elements have the following types:
   - filename (character; required)
   - ext (character; required)
   - selectedvalue (character; required)
   - chain (character; required)
   - range (character; required)
-  - selectedatoms (character; optional)
+  - chosenatoms (character; required)
   - color (character; required)
   - config (optional): . config has the following type: lists containing elements 'type', 'input'.
 those elements have the following types:
@@ -77,9 +78,15 @@ config.type: format of config.input
 resetView: bool if the view should be resettet
 uploaded: bool if the file was uploaded}
 
-\item{molStyles}{List of characters. Variable for changing the molecule representation
-Selection of possible molecule styles:
-    'ball+stick','cartoon','licorice',
-    'line','ribbon','rope','spacefill',
-    'surface','trace','tube'}
+\item{molStyles}{Lists containing elements 'representations', 'chosenatomscolor'.
+those elements have the following types:
+  - representations (list of characters; optional)
+  - chosenatomscolor (character; required). The data (in JSON format) that will be used to style the displayed molecule
+representations: one or multiple selected molecule representation
+ - Possible molecule styles:
+   'backbone,'ball+stick','cartoon', 'hyperball','licorice','line',
+   'ribbon',''rope','spacefill','surface','trace','tube'
+ - Possible additional representations:
+   'axes','axes+box','helixorient','unitcell'
+chosenAtomsColor: color of the 'ball+stick' representation of the chosen atoms}
 }

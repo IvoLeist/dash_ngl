@@ -44,12 +44,13 @@ Those keys have the following types:
   - antialias (boolean; optional)
   - transparent (boolean; optional)
   - trim (boolean; optional)
-- downloadImage (boolean; optional): flag if download image was pressed
+- downloadImage (boolean; default False): flag if download image was pressed
 - pdbString (string; optional): Variable which defines how many molecules should be shown and/or which chain
 The following format needs to be used:
-pdbID1.chain:start-end_pdbID2.chain:start-end
+pdbID1.chain:start-end@atom1,atom2_pdbID2.chain:start-end
 . indicates that only one chain should be shown
 : indicates that a specific range should be shown (e.g. 1-50)
+@ indicates that chosen atoms should be highlighted (e.g. @50,100,150)
  _ indicates that more than one protein should be shown
 - data (dict; default [{
   uploaded: true,
@@ -57,7 +58,7 @@ pdbID1.chain:start-end_pdbID2.chain:start-end
   resetView: false,
   chain: 'ALL',
   range: 'ALL',
-  selectedAtoms: '',
+  chosenAtoms: '',
   color: 'red',
   filename: 'placeholder',
   ext: '',
@@ -76,14 +77,14 @@ color: color in hex format
 config.input: content of the pdb file
 config.type: format of config.input
 resetView: bool if the view should be resettet
-uploaded: bool if the file was uploaded. data has the following type: list of dicts containing keys 'filename', 'ext', 'selectedValue', 'chain', 'range', 'selectedAtoms', 'color', 'config', 'resetView', 'uploaded'.
+uploaded: bool if the file was uploaded. data has the following type: list of dicts containing keys 'filename', 'ext', 'selectedValue', 'chain', 'range', 'chosenAtoms', 'color', 'config', 'resetView', 'uploaded'.
 Those keys have the following types:
   - filename (string; required)
   - ext (string; required)
   - selectedValue (string; required)
   - chain (string; required)
   - range (string; required)
-  - selectedAtoms (string; optional)
+  - chosenAtoms (string; required)
   - color (string; required)
   - config (dict; optional): config has the following type: dict containing keys 'type', 'input'.
 Those keys have the following types:
@@ -91,11 +92,17 @@ Those keys have the following types:
   - input (string; required)
   - resetView (boolean; required)
   - uploaded (boolean; required)
-- molStyles (list of strings; default ['cartoon','axes+box']): Variable for changing the molecule representation
-Selection of possible molecule styles:
-    'ball+stick','cartoon','licorice',
-    'line','ribbon','rope','spacefill',
-    'surface','trace','tube'"""
+- molStyles (dict; default ['cartoon','axes+box']): The data (in JSON format) that will be used to style the displayed molecule
+representations: one or multiple selected molecule representation
+ - Possible molecule styles:
+   'backbone,'ball+stick','cartoon', 'hyperball','licorice','line',
+   'ribbon',''rope','spacefill','surface','trace','tube'
+ - Possible additional representations:
+   'axes','axes+box','helixorient','unitcell'
+chosenAtomsColor: color of the 'ball+stick' representation of the chosen atoms. molStyles has the following type: dict containing keys 'representations', 'chosenAtomsColor'.
+Those keys have the following types:
+  - representations (list of strings; optional)
+  - chosenAtomsColor (string; required)"""
     @_explicitize_args
     def __init__(self, id=Component.UNDEFINED, viewportStyle=Component.UNDEFINED, stageParameters=Component.UNDEFINED, imageParameters=Component.UNDEFINED, downloadImage=Component.UNDEFINED, pdbString=Component.UNDEFINED, data=Component.UNDEFINED, molStyles=Component.UNDEFINED, **kwargs):
         self._prop_names = ['id', 'viewportStyle', 'stageParameters', 'imageParameters', 'downloadImage', 'pdbString', 'data', 'molStyles']

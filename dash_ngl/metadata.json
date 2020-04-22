@@ -28,7 +28,7 @@
             "type": null
           },
           {
-            "name": "selectedAtoms",
+            "name": "chosenAtoms",
             "type": null
           },
           {
@@ -60,7 +60,7 @@
             "type": null
           },
           {
-            "name": "selectedAtoms",
+            "name": "chosenAtoms",
             "type": null
           },
           {
@@ -199,14 +199,18 @@
           "name": "bool"
         },
         "required": false,
-        "description": "flag if download image was pressed"
+        "description": "flag if download image was pressed",
+        "defaultValue": {
+          "value": "false",
+          "computed": false
+        }
       },
       "pdbString": {
         "type": {
           "name": "string"
         },
         "required": false,
-        "description": "Variable which defines how many molecules should be shown and/or which chain\nThe following format needs to be used:\npdbID1.chain:start-end_pdbID2.chain:start-end\n. indicates that only one chain should be shown\n: indicates that a specific range should be shown (e.g. 1-50)\n _ indicates that more than one protein should be shown"
+        "description": "Variable which defines how many molecules should be shown and/or which chain\nThe following format needs to be used:\npdbID1.chain:start-end@atom1,atom2_pdbID2.chain:start-end\n. indicates that only one chain should be shown\n: indicates that a specific range should be shown (e.g. 1-50)\n@ indicates that chosen atoms should be highlighted (e.g. @50,100,150)\n _ indicates that more than one protein should be shown"
       },
       "data": {
         "type": {
@@ -234,9 +238,9 @@
                 "name": "string",
                 "required": true
               },
-              "selectedAtoms": {
+              "chosenAtoms": {
                 "name": "string",
-                "required": false
+                "required": true
               },
               "color": {
                 "name": "string",
@@ -270,19 +274,29 @@
         "required": false,
         "description": "The data (in JSON format) that will be used to display the molecule\nfilename: name of the used pdb/cif file\next: file extensions (pdb or cif)\nselectedValue: pdbString\nmolStyles: selected molecule representation (cartoon, stick, sphere)\nchain: selected chain\nrange: selected atoms range\ncolor: color in hex format\nconfig.input: content of the pdb file\nconfig.type: format of config.input\nresetView: bool if the view should be resettet\nuploaded: bool if the file was uploaded",
         "defaultValue": {
-          "value": "[{\n  uploaded: true,\n  selectedValue: 'placeholder',\n  resetView: false,\n  chain: 'ALL',\n  range: 'ALL',\n  selectedAtoms: '',\n  color: 'red',\n  filename: 'placeholder',\n  ext: '',\n  config: {\n    type: 'text/plain',\n    input: ''\n  }\n}]",
+          "value": "[{\n  uploaded: true,\n  selectedValue: 'placeholder',\n  resetView: false,\n  chain: 'ALL',\n  range: 'ALL',\n  chosenAtoms: '',\n  color: 'red',\n  filename: 'placeholder',\n  ext: '',\n  config: {\n    type: 'text/plain',\n    input: ''\n  }\n}]",
           "computed": false
         }
       },
       "molStyles": {
         "type": {
-          "name": "arrayOf",
+          "name": "exact",
           "value": {
-            "name": "string"
+            "representations": {
+              "name": "arrayOf",
+              "value": {
+                "name": "string"
+              },
+              "required": false
+            },
+            "chosenAtomsColor": {
+              "name": "string",
+              "required": true
+            }
           }
         },
         "required": false,
-        "description": "Variable for changing the molecule representation\nSelection of possible molecule styles:\n    'ball+stick','cartoon','licorice',\n    'line','ribbon','rope','spacefill',\n    'surface','trace','tube'",
+        "description": "The data (in JSON format) that will be used to style the displayed molecule\nrepresentations: one or multiple selected molecule representation\n - Possible molecule styles:\n   'backbone,'ball+stick','cartoon', 'hyperball','licorice','line',\n   'ribbon',''rope','spacefill','surface','trace','tube'\n - Possible additional representations:\n   'axes','axes+box','helixorient','unitcell'\nchosenAtomsColor: color of the 'ball+stick' representation of the chosen atoms",
         "defaultValue": {
           "value": "['cartoon','axes+box']",
           "computed": false

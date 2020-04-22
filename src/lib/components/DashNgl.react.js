@@ -142,15 +142,15 @@ export default class DashNgl extends Component {
   }
 
   //helper function for adding one or multiple molecular representaions
-  addMolStyle (struc,molStyles,sele, selectedAtoms, color) {
-    let reprs = molStyles
+  addMolStyle (struc,molStyles,sele, chosenAtoms, color) {
+    let reprs = molStyles.representations
     let args = {
       sele: sele,
-      showBox: molStyles.includes('axes+box')
+      showBox: reprs.includes('axes+box')
     }
 
-    if (selectedAtoms !== ''){
-      reprs.push(selectedAtoms)
+    if (chosenAtoms !== ''){
+      reprs.push(chosenAtoms)
     }
 
     
@@ -171,11 +171,11 @@ export default class DashNgl extends Component {
         repr = 'axes'
       }
 
-      if (repr === selectedAtoms){
+      if (repr === chosenAtoms){
         repr = 'ball+stick'
-        args.sele += ' and @' + selectedAtoms 
+        args.sele += ' and @' + chosenAtoms 
         args.radius = 1
-        args.color = "#ffffff" 
+        args.color = molStyles.chosenAtomsColor
         console.log(args)
       }
       struc.addRepresentation(repr, args)
@@ -191,13 +191,13 @@ export default class DashNgl extends Component {
   }
 
   // helper functions which styles the output of loadStructure/loadData
-  showStructure (stageObj, molStyles, chain, range, selectedAtoms, color, xOffset) {
+  showStructure (stageObj, molStyles, chain, range, chosenAtoms, color, xOffset) {
     const { stage, orientationMatrix } = this.state
     const newZoom = -500
     const duration = 1000
     let sele = ':'
 
-    console.log(selectedAtoms)
+    console.log(chosenAtoms)
     console.log("orientation Matrix")
     console.log(orientationMatrix)
     stage.viewerControls.orient(orientationMatrix);
@@ -205,7 +205,7 @@ export default class DashNgl extends Component {
     console.log(molStyles)
 
     if (chain === 'ALL'){
-      this.addMolStyle(stageObj,molStyles,sele, selectedAtoms, color)
+      this.addMolStyle(stageObj,molStyles,sele, chosenAtoms, color)
     } else {
       sele += chain
       if (range !== 'ALL') {
@@ -227,7 +227,7 @@ export default class DashNgl extends Component {
       )
           
       struc.setRotation(pa.getRotationQuaternion())
-      this.addMolStyle(struc,molStyles, sele, selectedAtoms, color)
+      this.addMolStyle(struc,molStyles, sele, chosenAtoms, color)
     } 
     
     //stage.animationControls.moveComponent(stageObj, stageObj.getCenter(), 1000)
@@ -263,7 +263,7 @@ export default class DashNgl extends Component {
           molStyles,
           data[i].chain,
           data[i].range,
-          data[i].selectedAtoms,
+          data[i].chosenAtoms,
           data[i].color,
           xOffset)
       } else { // load from backend
@@ -317,7 +317,7 @@ export default class DashNgl extends Component {
         molStyles,
         data.chain,
         data.range,
-        data.selectedAtoms,
+        data.chosenAtoms,
         data.color,
         xOffset
       )
@@ -361,7 +361,7 @@ const defaultData = [{
   resetView: false,
   chain: 'ALL',
   range: 'ALL',
-  selectedAtoms: '',
+  chosenAtoms: '',
   color: 'red',
   filename: 'placeholder',
   ext: '',
@@ -379,7 +379,10 @@ DashNgl.defaultProps = {
   stageParameters: defaultStageParameters,
   imageParameters: defaultImageParameters,
   downloadImage: false,
-  molStyles:['cartoon','axes+box']
+  molStyles:{
+    representaions:['cartoon','axes+box'],
+    chosenAtomsColor:'#ffffff'
+  }
 }
 
 DashNgl.propTypes = {
@@ -458,7 +461,7 @@ DashNgl.propTypes = {
       selectedValue: PropTypes.string.isRequired,
       chain: PropTypes.string.isRequired,
       range: PropTypes.string.isRequired,
-      selectedAtoms:PropTypes.string.isRequired,
+      chosenAtoms:PropTypes.string.isRequired,
       color: PropTypes.string.isRequired,
       config: PropTypes.exact({
         type: PropTypes.string.isRequired,
@@ -469,11 +472,18 @@ DashNgl.propTypes = {
     })
   ),
   /**
-   * Variable for changing the molecule representation
-   * Selection of possible molecule styles:
-    'ball+stick','cartoon','licorice',
-    'line','ribbon','rope','spacefill',
-    'surface','trace','tube'
+   * The data (in JSON format) that will be used to style the displayed molecule
+   * representations: one or multiple selected molecule representation
+   *  - Possible molecule styles:
+   *    'backbone,'ball+stick','cartoon', 'hyperball','licorice','line',
+   *    'ribbon',''rope','spacefill','surface','trace','tube'
+   *  - Possible additional representations:
+   *    'axes','axes+box','helixorient','unitcell'
+   * chosenAtomsColor: color of the 'ball+stick' representation of the chosen atoms
    */
-  molStyles: PropTypes.arrayOf(PropTypes.string)
+  molStyles:
+    PropTypes.exact({ 
+      representations: PropTypes.arrayOf(PropTypes.string),
+      chosenAtomsColor: PropTypes.string.isRequired
+    })
 }

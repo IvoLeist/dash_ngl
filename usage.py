@@ -69,7 +69,7 @@ data_dict = {
     'resetView': False,
     'chain': 'ALL',
     'range': 'ALL',
-    'selectedAtoms':'',
+    'chosenAtoms':'',
     'color': '#e41a1c',
     'filename': 'placeholder',
     'ext': '',
@@ -188,6 +188,21 @@ view_tab = [
             dcc.Input(
                 id='molecules-chain-color',
                 value=','.join(color_list)
+            ),
+        ],
+    ),
+    html.Div(
+        title='select chosen atoms color',
+        className='app-controls-block',
+        id='ngl-atom-color',
+        children=[
+            html.P(
+                'Chosen atoms Color',
+                style={'fontWeight': 'bold', 'marginBottom': '10px'},
+            ),
+            dcc.Input(
+                id='chosen-atoms-color',
+                value='#ffffff'
             ),
         ],
     ),
@@ -376,7 +391,7 @@ def createDict(
         'selectedValue': selection,
         'chain': chain,
         'range': atoms_range,
-        'selectedAtoms': atoms_string,
+        'chosenAtoms': atoms_string,
         'color': color,
         'config': {'type': 'text/plain', 'input': contents},
         'resetView': resetView,
@@ -527,6 +542,7 @@ def getUploadedData(uploaded_content):
         State('pdb-dropdown', 'options'),
         State('uploaded-files', 'children'),
         State('molecules-chain-color', 'value'),
+        State('chosen-atoms-color', 'value')
     ],
 )
 def display_output(
@@ -538,7 +554,8 @@ def display_output(
     pdbString,
     dropdown_options,
     files,
-    colors
+    colors,
+    chosenAtomsColor,
 ):
     print('selection,pdbString_clicks,pdbString,type uploaded_content', 'files')
     print(selection, molStyles_list, pdbString_clicks, pdbString, type(uploaded_content), type(files))
@@ -555,8 +572,13 @@ def display_output(
 
     print('triggred', input_id)
 
+    molStyles_dict = {
+        'representations': molStyles_list,
+        'chosenAtomsColor': chosenAtomsColor
+    }
+
     if input_id is None:
-        return [data_dict], molStyles_list, options, files, no_update, no_update
+        return [data_dict], molStyles_dict, options, files, no_update, no_update
 
     if input_id == 'pdb-dropdown':
         print('dropdown changed')
@@ -587,7 +609,7 @@ def display_output(
                         uploaded=False,
                     )
                 ],
-                molStyles_list,
+                molStyles_dict,
                 options,
                 files,
                 no_update,
@@ -595,7 +617,7 @@ def display_output(
             )
 
         data = [getLocalData(selection, pdb_id, color_list[0], files, resetView=False)]
-        return data, molStyles_list, options, files, no_update, no_update
+        return data, molStyles_dict, options, files, no_update, no_update
 
     # TODO submit and reset view in one button
     # reset view/submit is triggered two times when the mol style is changed
@@ -639,7 +661,7 @@ def display_output(
         else:
             data.append(data_dict)
 
-        return data, molStyles_list, options, files, 'Select a molecule', warning
+        return data, molStyles_dict, options, files, 'Select a molecule', warning
 
     if input_id == 'ngl-upload-data':
         data, uploads = getUploadedData(uploaded_content)
@@ -650,10 +672,10 @@ def display_output(
                 print('uploaded', pdb_id)
                 files += pdb_id + '.' + ext + ','
 
-        return data, molStyles_list, options, files, pdb_id, no_update
+        return data, molStyles_dict, options, files, pdb_id, no_update
 
     if input_id == 'molecules-represetation-style':
-        return no_update, molStyles_list, no_update, no_update, no_update, no_update
+        return no_update, molStyles_dict, no_update, no_update, no_update, no_update
 
 # CB change molecule representation
 @app.callback(
