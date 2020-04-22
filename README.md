@@ -23,7 +23,7 @@ Therefore I have build a dash [NGL](https://github.com/arose/ngl) viewer tailore
 - [x] Changeable camera settings ( perspective / orthographic)
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/IvoLeist/dash_ngl/master/static/demo_0.png">
+  <img src="https://raw.githubusercontent.com/IvoLeist/dash_ngl/master/static/demo_2.png">
 </p>
 
 ## Limitations
