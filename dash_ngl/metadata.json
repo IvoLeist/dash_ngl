@@ -28,7 +28,7 @@
             "type": null
           },
           {
-            "name": "chosenAtoms",
+            "name": "chosen",
             "type": null
           },
           {
@@ -60,7 +60,7 @@
             "type": null
           },
           {
-            "name": "chosenAtoms",
+            "name": "chosen",
             "type": null
           },
           {
@@ -238,13 +238,23 @@
                 "name": "string",
                 "required": true
               },
-              "chosenAtoms": {
-                "name": "string",
-                "required": true
-              },
               "color": {
                 "name": "string",
                 "required": true
+              },
+              "chosen": {
+                "name": "exact",
+                "value": {
+                  "residues": {
+                    "name": "string",
+                    "required": true
+                  },
+                  "atoms": {
+                    "name": "string",
+                    "required": true
+                  }
+                },
+                "required": false
               },
               "config": {
                 "name": "exact",
@@ -272,9 +282,9 @@
           }
         },
         "required": false,
-        "description": "The data (in JSON format) that will be used to display the molecule\nfilename: name of the used pdb/cif file\next: file extensions (pdb or cif)\nselectedValue: pdbString\nmolStyles: selected molecule representation (cartoon, stick, sphere)\nchain: selected chain\nrange: selected atoms range\ncolor: color in hex format\nconfig.input: content of the pdb file\nconfig.type: format of config.input\nresetView: bool if the view should be resettet\nuploaded: bool if the file was uploaded",
+        "description": "The data (in JSON format) that will be used to display the molecule\nfilename: name of the used pdb/cif file\next: file extensions (pdb or cif)\nselectedValue: pdbString\nmolStyles: selected molecule representation (cartoon, stick, sphere)\nchain: selected chain\ncolor: chain color\nrange: selected atoms range\nconfig.input: content of the pdb file\nconfig.type: format of config.input\nresetView: bool if the view should be resettet\nuploaded: bool if the file was uploaded",
         "defaultValue": {
-          "value": "[{\n  uploaded: true,\n  selectedValue: 'placeholder',\n  resetView: false,\n  chain: 'ALL',\n  range: 'ALL',\n  chosenAtoms: '',\n  color: 'red',\n  filename: 'placeholder',\n  ext: '',\n  config: {\n    type: 'text/plain',\n    input: ''\n  }\n}]",
+          "value": "[{\n  filename: 'placeholder',\n  ext: '',\n  selectedValue: 'placeholder',\n  chain: 'ALL',\n  range: 'ALL',\n  color: 'red',\n  chosen: {\n    'chosenAtoms':'',\n    'chosenResidues':''\n  },\n  config: {\n    type: 'text/plain',\n    input: ''\n  },\n  uploaded: true,\n  resetView: false,\n}]",
           "computed": false
         }
       },
@@ -292,13 +302,17 @@
             "chosenAtomsColor": {
               "name": "string",
               "required": true
+            },
+            "chosenAtomsRadius": {
+              "name": "number",
+              "required": true
             }
           }
         },
         "required": false,
         "description": "The data (in JSON format) that will be used to style the displayed molecule\nrepresentations: one or multiple selected molecule representation\n - Possible molecule styles:\n   'backbone,'ball+stick','cartoon', 'hyperball','licorice','line',\n   'ribbon',''rope','spacefill','surface','trace','tube'\n - Possible additional representations:\n   'axes','axes+box','helixorient','unitcell'\nchosenAtomsColor: color of the 'ball+stick' representation of the chosen atoms",
         "defaultValue": {
-          "value": "['cartoon','axes+box']",
+          "value": "{\n  representations:['cartoon','axes+box'],\n  chosenAtomsColor:'#ffffff',\n  chosenAtomsRadius: 1\n}",
           "computed": false
         }
       }

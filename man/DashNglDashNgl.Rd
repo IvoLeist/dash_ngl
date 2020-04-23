@@ -51,15 +51,18 @@ pdbID1.chain:start-end@atom1,atom2_pdbID2.chain:start-end
 @ indicates that chosen atoms should be highlighted (e.g. @50,100,150)
  _ indicates that more than one protein should be shown}
 
-\item{data}{List of lists containing elements 'filename', 'ext', 'selectedvalue', 'chain', 'range', 'chosenatoms', 'color', 'config', 'resetview', 'uploaded'.
+\item{data}{List of lists containing elements 'filename', 'ext', 'selectedvalue', 'chain', 'range', 'color', 'chosen', 'config', 'resetview', 'uploaded'.
 those elements have the following types:
   - filename (character; required)
   - ext (character; required)
   - selectedvalue (character; required)
   - chain (character; required)
   - range (character; required)
-  - chosenatoms (character; required)
   - color (character; required)
+  - chosen (optional): . chosen has the following type: lists containing elements 'residues', 'atoms'.
+those elements have the following types:
+  - residues (character; required)
+  - atoms (character; required)
   - config (optional): . config has the following type: lists containing elements 'type', 'input'.
 those elements have the following types:
   - type (character; required)
@@ -71,17 +74,18 @@ ext: file extensions (pdb or cif)
 selectedValue: pdbString
 molStyles: selected molecule representation (cartoon, stick, sphere)
 chain: selected chain
+color: chain color
 range: selected atoms range
-color: color in hex format
 config.input: content of the pdb file
 config.type: format of config.input
 resetView: bool if the view should be resettet
 uploaded: bool if the file was uploaded}
 
-\item{molStyles}{Lists containing elements 'representations', 'chosenatomscolor'.
+\item{molStyles}{Lists containing elements 'representations', 'chosenatomscolor', 'chosenatomsradius'.
 those elements have the following types:
   - representations (list of characters; optional)
-  - chosenatomscolor (character; required). The data (in JSON format) that will be used to style the displayed molecule
+  - chosenatomscolor (character; required)
+  - chosenatomsradius (numeric; required). The data (in JSON format) that will be used to style the displayed molecule
 representations: one or multiple selected molecule representation
  - Possible molecule styles:
    'backbone,'ball+stick','cartoon', 'hyperball','licorice','line',

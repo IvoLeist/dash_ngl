@@ -69,7 +69,10 @@ data_dict = {
     'resetView': False,
     'chain': 'ALL',
     'range': 'ALL',
-    'chosenAtoms':'',
+    'chosen':{
+        'atoms':'',
+        'residues':''
+    },
     'color': '#e41a1c',
     'filename': 'placeholder',
     'ext': '',
@@ -99,7 +102,7 @@ about_html = [
     ),
     html.P(
         'Additionally you can show multiple structures and (or) specify a chain/'
-        ' atom range/ highlight chosen atoms.'
+        ' atom range/ highlight Cα of chosen residues or single atoms.'
     ),
     html.P(
         'In the "View" tab, you can change the style of the viewer.'
@@ -109,7 +112,7 @@ about_html = [
 ]
 
 data_tab = [
-    html.Div(className='app-controls-name', children='Select structure',),
+    html.Div(className='app-controls-name', children='Select structure'),
     dcc.Dropdown(
         id='pdb-dropdown',
         clearable=False,
@@ -122,14 +125,14 @@ data_tab = [
             html.P(
                 'Show multiple structures and (or) \
                  specify a chain/ atom range/ \
-                 highlight chosen atoms',
+                 highlight chosen residues/ atoms',
             style={'fontSize': '10pt'},
         )]
     ),
     dcc.Input(
         id='pdb-string',
         placeholder='pdbID1.chain:start-end_pdbID2.chain:start-end',
-        value='6CHG.A:1-450@50,100,150_3K8P.D',
+        value='6CHG.A:1-450@a50,a100,a150_3K8P.D',
         style={'width':'100%'}),
     html.Br(),
     html.Button('submit', id='btn-pdbString'),
@@ -167,7 +170,7 @@ view_tab = [
                 style={'fontWeight': 'bold', 'marginBottom': '10px'},
             ),
             dcc.Dropdown(
-                id='molecules-represetation-style',
+                id='molecules-representation-style',
                 options=[{'label': e, 'value': e.lower()}
                         for e in representations],
                 placeholder='select molecule style',
@@ -202,7 +205,22 @@ view_tab = [
             ),
             dcc.Input(
                 id='chosen-atoms-color',
-                value='#ffffff'
+                value='#808080'
+            ),
+        ],
+    ),
+    html.Div(
+        title='select chosen atoms radius',
+        className='app-controls-block',
+        id='ngl-atom-radius',
+        children=[
+            html.P(
+                'Chosen atoms radius',
+                style={'fontWeight': 'bold', 'marginBottom': '10px'},
+            ),
+            dcc.Input(
+                id='chosen-atoms-radius',
+                value='1.1'
             ),
         ],
     ),
@@ -230,7 +248,7 @@ view_tab = [
         children=[
             html.P(
                 'Camera settings',
-                style={'fontWeight': 'bold', 'marginBottom': '10px',},
+                style={'fontWeight': 'bold', 'marginBottom': '10px'},
             ),
             dcc.Dropdown(
                 id='stage-camera-type',
@@ -249,7 +267,7 @@ view_tab = [
         children=[
             html.P(
                 'Render quality',
-                style={'fontWeight': 'bold', 'marginBottom': '10px',},
+                style={'fontWeight': 'bold', 'marginBottom': '10px'},
             ),
             dcc.Dropdown(
                 id='stage-render-quality',
@@ -272,7 +290,7 @@ download_tab = [
         id='ngl-image-antialias',
         children=[
             html.P(
-                'antialias', style={'fontWeight': 'bold', 'marginBottom': '10px',},
+                'antialias', style={'fontWeight': 'bold', 'marginBottom': '10px'},
             ),
             dcc.Dropdown(
                 id='image-antialias',
@@ -300,7 +318,7 @@ download_tab = [
         id='ngl-image-transparent',
         children=[
             html.P(
-                'transparent', style={'fontWeight': 'bold', 'marginBottom': '10px',},
+                'transparent', style={'fontWeight': 'bold', 'marginBottom': '10px'},
             ),
             dcc.Dropdown(
                 id='image-transparent',
@@ -377,50 +395,84 @@ def createDict(
     selection,
     chain,
     atoms_range,
-    atoms_string,
+    highlight_dic,
     color,
     filename,
     ext,
     contents,
     resetView=False,
     uploaded=False,
-):
+):  
+    print ('create dic')
+    print (highlight_dic)
     return {
         'filename': filename,
         'ext': ext,
         'selectedValue': selection,
         'chain': chain,
         'range': atoms_range,
-        'chosenAtoms': atoms_string,
+        'chosen':highlight_dic,
         'color': color,
         'config': {'type': 'text/plain', 'input': contents},
         'resetView': resetView,
         'uploaded': uploaded,
     }
 
+def getHighlights(string,sep,atom_indicator):
+    print ('getHighlights')
+    residues_list = []
+    atoms_list = []
+
+    str_, _str = string.split(sep)
+    for e in _str.split(','):
+        if atom_indicator in e:
+            atoms_list.append(e.replace(atom_indicator, ''))
+        else:
+            residues_list.append(e)
+
+    print(atoms_list)
+    print(residues_list)
+    return (
+        str_, {
+            'atoms':','.join(atoms_list),
+            'residues':','.join(residues_list),
+        })
 
 # Helper function to load structures from local storage
 def getLocalData(selection, pdb_id, color, uploadedFiles, resetView=False):
+    print ('getLocalData')
 
     chain = 'ALL'
     atoms_range = 'ALL'
-    atoms_string = ''
+    highlight_dic = {
+        'atoms':'',
+        'residues':''
+        }
+
+    pdb_sep = '.'
+    chain_sep = ':'
+    highlights_sep = '@'
+    atom_indicator = 'a'
 
     # Check if only one chain should be shown
-    if '.' in pdb_id:
-        pdb_id, chain = pdb_id.split('.')
+    if pdb_sep in pdb_id:
+        pdb_id, chain = pdb_id.split(pdb_sep)
 
         # Check if only a specified amino acids range should be shown:
-        if ':' in chain:
-            chain, atoms_range = chain.split(':')
+        if chain_sep in chain:
+            chain, atoms_range = chain.split(chain_sep)
 
             # Check if atoms should be highlighted
-            if '@' in atoms_range:
-                atoms_range, atoms_string = atoms_range.split('@')
+            if highlights_sep in atoms_range:
+                atoms_range, highlight_dic = getHighlights(atoms_range, highlights_sep, atom_indicator)
 
         else:
-            if '@' in chain:
-                chain, atoms_string = chain.split('@')
+            if highlights_sep in chain:
+                chain, highlight_dic = getHighlights(chain, highlights_sep, atom_indicator)
+
+
+    #print ('highlight_dic')
+    #print (highlight_dic)
 
     if pdb_id not in pdbs_list:
         if pdb_id in uploadedFiles:
@@ -434,7 +486,7 @@ def getLocalData(selection, pdb_id, color, uploadedFiles, resetView=False):
                 selection,
                 chain,
                 atoms_range,
-                atoms_string,
+                highlight_dic,
                 color,
                 fname,
                 fname.split('.')[1],
@@ -462,7 +514,7 @@ def getLocalData(selection, pdb_id, color, uploadedFiles, resetView=False):
         selection,
         chain,
         atoms_range,
-        atoms_string,
+        highlight_dic,
         color,
         filename,
         ext,
@@ -480,7 +532,11 @@ def getUploadedData(uploaded_content):
     ext = 'pdb'
     chain = 'ALL'
     atoms_range = 'ALL'
-    atoms_string = ''
+
+    highlight_dic = {
+        'chosenAtoms':'',
+        'chosenResidues':''
+        }
 
     for i, content in enumerate(uploaded_content):
         content_type, content = str(content).split(',')
@@ -506,7 +562,7 @@ def getUploadedData(uploaded_content):
                 pdb_id,
                 chain,
                 atoms_range,
-                atoms_string,
+                highlight_dic,
                 color_list[i],
                 filename,
                 ext,
@@ -535,14 +591,15 @@ def getUploadedData(uploaded_content):
         Input('ngl-upload-data', 'contents'),
         Input('btn-pdbString', 'n_clicks'),
         Input('btn-resetView', 'n_clicks'),
-        Input('molecules-represetation-style', 'value'),
+        Input('molecules-representation-style', 'value'),
     ],
     [
         State('pdb-string', 'value'),
         State('pdb-dropdown', 'options'),
         State('uploaded-files', 'children'),
         State('molecules-chain-color', 'value'),
-        State('chosen-atoms-color', 'value')
+        State('chosen-atoms-color', 'value'),
+        State('chosen-atoms-radius', 'value')
     ],
 )
 def display_output(
@@ -556,6 +613,7 @@ def display_output(
     files,
     colors,
     chosenAtomsColor,
+    chosenAtomsRadius
 ):
     print('selection,pdbString_clicks,pdbString,type uploaded_content', 'files')
     print(selection, molStyles_list, pdbString_clicks, pdbString, type(uploaded_content), type(files))
@@ -570,11 +628,12 @@ def display_output(
     if ctx.triggered:
         input_id = ctx.triggered[0]['prop_id'].split('.')[0]
 
-    print('triggred', input_id)
+    print('triggered', input_id)
 
     molStyles_dict = {
         'representations': molStyles_list,
-        'chosenAtomsColor': chosenAtomsColor
+        'chosenAtomsColor': chosenAtomsColor,
+        'chosenAtomsRadius': float(chosenAtomsRadius)
     }
 
     if input_id is None:
@@ -593,14 +652,18 @@ def display_output(
             content = ''
             chain = 'ALL'
             atoms_range = 'ALL'
-            atoms_string = ''
+            highlight_dic = {
+                'chosenAtoms':'',
+                'chosenResidues':''
+                }
+
             return (
                 [
                     createDict(
                         pdb_id,
                         chain,
                         atoms_range,
-                        atoms_string,
+                        highlight_dic,
                         colors_list[0],
                         fname,
                         fname.split('.')[1],
@@ -616,6 +679,7 @@ def display_output(
                 no_update
             )
 
+        print ("HERE")
         data = [getLocalData(selection, pdb_id, color_list[0], files, resetView=False)]
         return data, molStyles_dict, options, files, no_update, no_update
 
@@ -674,7 +738,7 @@ def display_output(
 
         return data, molStyles_dict, options, files, pdb_id, no_update
 
-    if input_id == 'molecules-represetation-style':
+    if input_id == 'molecules-representation-style':
         return no_update, molStyles_dict, no_update, no_update, no_update, no_update
 
 # CB change molecule representation
