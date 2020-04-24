@@ -149,7 +149,7 @@ export default class DashNgl extends Component {
       struc.addRepresentation(repr, args)
     }
     if (chosenResidues!== ''){
-      args.sele = sele + '.CA ' + ' and (' + chosenResidues.replace(/,/g,' or ') + ')'
+      args.sele = sele + '.CA and (' + chosenResidues.replace(/,/g,' or ') + ')'
       struc.addRepresentation(repr, args)
     }
   }
