@@ -11,6 +11,34 @@
         "returns": null
       },
       {
+        "name": "highlightAtoms",
+        "docblock": null,
+        "modifiers": [],
+        "params": [
+          {
+            "name": "args",
+            "type": null
+          },
+          {
+            "name": "sele",
+            "type": null
+          },
+          {
+            "name": "struc",
+            "type": null
+          },
+          {
+            "name": "chosenAtoms",
+            "type": null
+          },
+          {
+            "name": "chosenResidues",
+            "type": null
+          }
+        ],
+        "returns": null
+      },
+      {
         "name": "addMolStyle",
         "docblock": null,
         "modifiers": [],

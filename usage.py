@@ -102,7 +102,7 @@ about_html = [
     ),
     html.P(
         'Additionally you can show multiple structures and (or) specify a chain/'
-        ' atom range/ highlight Cα of chosen residues or single atoms.'
+        ' residues range / highlight Cα of chosen residues or single atoms.'
     ),
     html.P(
         'In the "View" tab, you can change the style of the viewer.'
@@ -124,7 +124,7 @@ data_tab = [
         children=[
             html.P(
                 'Show multiple structures and (or) \
-                 specify a chain/ atom range/ \
+                 specify a chain/ residues range/ \
                  highlight chosen residues/ atoms',
             style={'fontSize': '10pt'},
         )]
@@ -394,7 +394,7 @@ app.layout = html.Div(
 def createDict(
     selection,
     chain,
-    atoms_range,
+    aa_range,
     highlight_dic,
     color,
     filename,
@@ -410,7 +410,7 @@ def createDict(
         'ext': ext,
         'selectedValue': selection,
         'chain': chain,
-        'range': atoms_range,
+        'range': aa_range,
         'chosen':highlight_dic,
         'color': color,
         'config': {'type': 'text/plain', 'input': contents},
@@ -443,28 +443,25 @@ def getLocalData(selection, pdb_id, color, uploadedFiles, resetView=False):
     print ('getLocalData')
 
     chain = 'ALL'
-    atoms_range = 'ALL'
+    aa_range = 'ALL'
     highlight_dic = {
         'atoms':'',
         'residues':''
         }
 
-    pdb_sep = '.'
-    chain_sep = ':'
     highlights_sep = '@'
     atom_indicator = 'a'
-
     # Check if only one chain should be shown
-    if pdb_sep in pdb_id:
-        pdb_id, chain = pdb_id.split(pdb_sep)
+    if '.' in pdb_id:
+        pdb_id, chain = pdb_id.split('.')
 
         # Check if only a specified amino acids range should be shown:
-        if chain_sep in chain:
-            chain, atoms_range = chain.split(chain_sep)
+        if ':' in chain:
+            chain, aa_range = chain.split(':')
 
             # Check if atoms should be highlighted
-            if highlights_sep in atoms_range:
-                atoms_range, highlight_dic = getHighlights(atoms_range, highlights_sep, atom_indicator)
+            if highlights_sep in aa_range:
+                aa_range, highlight_dic = getHighlights(aa_range, highlights_sep, atom_indicator)
 
         else:
             if highlights_sep in chain:
@@ -485,7 +482,7 @@ def getLocalData(selection, pdb_id, color, uploadedFiles, resetView=False):
             return createDict(
                 selection,
                 chain,
-                atoms_range,
+                aa_range,
                 highlight_dic,
                 color,
                 fname,
@@ -513,7 +510,7 @@ def getLocalData(selection, pdb_id, color, uploadedFiles, resetView=False):
     return createDict(
         selection,
         chain,
-        atoms_range,
+        aa_range,
         highlight_dic,
         color,
         filename,
@@ -531,7 +528,7 @@ def getUploadedData(uploaded_content):
 
     ext = 'pdb'
     chain = 'ALL'
-    atoms_range = 'ALL'
+    aa_range = 'ALL'
 
     highlight_dic = {
         'chosenAtoms':'',
@@ -561,7 +558,7 @@ def getUploadedData(uploaded_content):
             createDict(
                 pdb_id,
                 chain,
-                atoms_range,
+                aa_range,
                 highlight_dic,
                 color_list[i],
                 filename,
@@ -651,7 +648,7 @@ def display_output(
 
             content = ''
             chain = 'ALL'
-            atoms_range = 'ALL'
+            aa_range = 'ALL'
             highlight_dic = {
                 'chosenAtoms':'',
                 'chosenResidues':''
@@ -662,7 +659,7 @@ def display_output(
                     createDict(
                         pdb_id,
                         chain,
-                        atoms_range,
+                        aa_range,
                         highlight_dic,
                         colors_list[0],
                         fname,

@@ -141,6 +141,18 @@ export default class DashNgl extends Component {
     });
   }
 
+  //helper function for highlighting atoms
+  highlightAtoms(args,sele,struc,chosenAtoms,chosenResidues){
+    const repr = 'ball+stick'
+    if (chosenAtoms!==''){
+      args.sele = sele + ' and @' + chosenAtoms
+      struc.addRepresentation(repr, args)
+    }
+    if (chosenResidues!== ''){
+      args.sele = sele + '.CA ' + ' and (' + chosenResidues.replace(/,/g,' or ') + ')'
+      struc.addRepresentation(repr, args)
+    }
+  }
 
   //helper function for adding one or multiple molecular representations
   addMolStyle (struc,molStyles, sele, chosen, color) {
@@ -150,20 +162,10 @@ export default class DashNgl extends Component {
     let chosenAtoms = chosen.atoms
     let chosenResidues = chosen.residues
     console.log(chosen)
-    console.log({chosenAtoms, chosenResidues})
     let args = {
       sele: sele,
       showBox: reprs.includes('axes+box')
     }
-
-    if (chosenAtoms!==''){
-      reprs.push(chosenAtoms)
-    }
-
-    if (chosenResidues!== ''){
-      reprs.push(chosenResidues)
-    }
-
     if (sele !== ':'){
       args.color = color
     }
@@ -171,41 +173,20 @@ export default class DashNgl extends Component {
     console.log(reprs)
     reprs.forEach(e => {
       let repr = e
-      console.log("repr")
-      console.log(repr)
-      console.log('args')
-      console.log(args)
       if (repr === 'axes+box') {
         // This is not a ngl provided moleculuar representation
         // but a combination of repr: 'axes' and showBox = true 
         repr = 'axes'
       }
-
-      // check if atoms should be selected
-      console.log(repr)
-      
-      if (repr === chosenAtoms || repr === chosenResidues){
-        if (repr === chosenAtoms){
-          console.log('atoms should be selected')
-          args.sele = sele + ' and @' + chosenAtoms
-          console.log(args.sele)
-        }
-
-        
-        if (repr === chosenResidues){
-          console.log('residues should be selected')
-          args.sele = sele + '.CA ' + ' and (' + chosenResidues.replace(/,/g,' or ') + ')'
-          console.log(args.sele)
-        }
-        repr = 'ball+stick'
-        args.radius = molStyles.chosenAtomsRadius
-        args.color = molStyles.chosenAtomsColor
-      }
-
-      console.log(args)
-      console.log(repr)
       struc.addRepresentation(repr, args)
     })
+
+    // check if atoms should be selected
+    if (chosenAtoms !=='' || chosenResidues !==''){
+      args.radius = molStyles.chosenAtomsRadius
+      args.color = molStyles.chosenAtomsColor
+      this.highlightAtoms (args,sele,struc,chosenAtoms,chosenResidues)
+    }
   }
 
   // helper functions which styles the output of loadStructure/loadData
@@ -471,7 +452,7 @@ DashNgl.propTypes = {
    * molStyles: selected molecule representation (cartoon, stick, sphere)
    * chain: selected chain
    * color: chain color
-   * range: selected atoms range
+   * range: selected residues range
    * config.input: content of the pdb file
    * config.type: format of config.input
    * resetView: bool if the view should be resettet
