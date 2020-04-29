@@ -76,7 +76,7 @@ selectedValue: pdbString
 molStyles: selected molecule representation (cartoon, stick, sphere)
 chain: selected chain
 color: chain color
-range: selected atoms range
+range: selected residues range
 config.input: content of the pdb file
 config.type: format of config.input
 resetView: bool if the view should be resettet

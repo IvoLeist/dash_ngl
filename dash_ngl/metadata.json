@@ -310,7 +310,7 @@
           }
         },
         "required": false,
-        "description": "The data (in JSON format) that will be used to display the molecule\nfilename: name of the used pdb/cif file\next: file extensions (pdb or cif)\nselectedValue: pdbString\nmolStyles: selected molecule representation (cartoon, stick, sphere)\nchain: selected chain\ncolor: chain color\nrange: selected atoms range\nconfig.input: content of the pdb file\nconfig.type: format of config.input\nresetView: bool if the view should be resettet\nuploaded: bool if the file was uploaded",
+        "description": "The data (in JSON format) that will be used to display the molecule\nfilename: name of the used pdb/cif file\next: file extensions (pdb or cif)\nselectedValue: pdbString\nmolStyles: selected molecule representation (cartoon, stick, sphere)\nchain: selected chain\ncolor: chain color\nrange: selected residues range\nconfig.input: content of the pdb file\nconfig.type: format of config.input\nresetView: bool if the view should be resettet\nuploaded: bool if the file was uploaded",
         "defaultValue": {
           "value": "[{\n  filename: 'placeholder',\n  ext: '',\n  selectedValue: 'placeholder',\n  chain: 'ALL',\n  range: 'ALL',\n  color: 'red',\n  chosen: {\n    'chosenAtoms':'',\n    'chosenResidues':''\n  },\n  config: {\n    type: 'text/plain',\n    input: ''\n  },\n  uploaded: true,\n  resetView: false,\n}]",
           "computed": false

@@ -213,29 +213,26 @@ export default class DashNgl extends Component {
       }
 
       const selection = new Selection(sele)
-      const pa = stageObj.structure.getPrincipalAxes(selection)
-      const struc = stage.addComponentFromObject(
-                      stageObj.structure.getView(
-                        selection)
-                    )
+      const structure = stageObj.structure.getView(selection)
+      const pa = structure.getPrincipalAxes()
+      const struc = stage.addComponentFromObject(structure)
       const struc_centre = struc.getCenter()
+
+      struc.setRotation(pa.getRotationQuaternion())
       struc.setPosition(
         [(0-struc_centre.x)-xOffset,
           0-struc_centre.y,
           0-struc_centre.z]
-      )
-          
-      struc.setRotation(pa.getRotationQuaternion())
-      console.log(molStyles)
+          )
       this.addMolStyle(struc,molStyles, sele, chosen, color)
     } 
     
     //stage.animationControls.moveComponent(stageObj, stageObj.getCenter(), 1000)
     //const center = stage.getCenter()
-    stage.animationControls.zoom(newZoom, duration)
+    //stage.animationControls.zoom(newZoom, duration)
     //stage.animationControls.zoomMove(center, newZoom, duration)
 
-    // stage.autoView()
+    stage.autoView()
   }
 
   // loadStructure (stage, filename, molStyles, chain, range, color, xOffset) {
