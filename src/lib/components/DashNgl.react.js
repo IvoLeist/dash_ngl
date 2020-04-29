@@ -208,7 +208,7 @@ export default class DashNgl extends Component {
     } else {
       sele += chain
       if (range !== 'ALL') {
-        sele += ' and ' + range
+        sele += '/0 and ' + range
         console.log (sele)
       }
 
