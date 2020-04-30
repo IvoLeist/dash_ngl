@@ -152,7 +152,7 @@ data_tab = [
                 # Allow multiple files to be uploaded
                 multiple=True,
             ),
-            html.Div(id='uploaded-files', children=html.Div([''])),
+            #html.Div(id='uploaded-files', children=html.Div([''])),
             html.Div(id='warning_div', children=html.Div([''])),
         ],
     ),
@@ -367,6 +367,9 @@ tabs = html.Div(
 app.layout = html.Div(
     id='main-page',
     children=[
+        # looses the data when the browser/tab closes.
+        dcc.Store(id='uploaded-files', 
+                  storage_type='session'),
         html.Div(
             id='app-page-header',
             children=[html.H1('Ngl Molecule Viewer')],
@@ -531,8 +534,8 @@ def getUploadedData(uploaded_content):
     aa_range = 'ALL'
 
     highlight_dic = {
-        'chosenAtoms':'',
-        'chosenResidues':''
+        'atoms':'',
+        'residues':''
         }
 
     for i, content in enumerate(uploaded_content):
@@ -578,7 +581,7 @@ def getUploadedData(uploaded_content):
         Output(component_id, 'data'),
         Output(component_id, 'molStyles'),
         Output('pdb-dropdown', 'options'),
-        Output('uploaded-files', 'children'),
+        Output('uploaded-files', 'data'),
         Output('pdb-dropdown', 'placeholder'),
         Output('warning_div', 'children'),
 
@@ -593,7 +596,7 @@ def getUploadedData(uploaded_content):
     [
         State('pdb-string', 'value'),
         State('pdb-dropdown', 'options'),
-        State('uploaded-files', 'children'),
+        State('uploaded-files', 'data'),
         State('molecules-chain-color', 'value'),
         State('chosen-atoms-color', 'value'),
         State('chosen-atoms-radius', 'value')
@@ -618,7 +621,11 @@ def display_output(
     input_id = None
     options = dropdown_options
     colors_list = colors.split(',')
-    files = files['props']['children'] if isinstance(files, dict) else ''.join(files)
+    #files = files['props']['children'] if isinstance(files, dict) else ''.join(files)
+    #print('files', files)
+
+    # Give a default data dict if no files are uploaded
+    files = files or {'uploaded': []}
     print('files', files)
 
     ctx = dash.callback_context
@@ -640,18 +647,20 @@ def display_output(
         print('dropdown changed')
         pdb_id = selection
 
-        if pdb_id in files:
+        uploaded_files = files["uploaded"]
+        if pdb_id in ",".join(uploaded_files):
             print('Already uploaded')
-            print(files[:-1].split(','))
-            fname = [i for i in files[:-1].split(',') if pdb_id in i][0]
+            #print(files[:-1].split(','))
+            fname = [e for e in uploaded_files if pdb_id in e][0]
+            #fname = [i for i in files[:-1].split(',') if pdb_id in i][0]
             print(fname)
 
             content = ''
             chain = 'ALL'
             aa_range = 'ALL'
             highlight_dic = {
-                'chosenAtoms':'',
-                'chosenResidues':''
+                'atoms':'',
+                'residues':''
                 }
 
             return (
@@ -730,8 +739,12 @@ def display_output(
         for pdb_id, ext in [e.split('.') for e in uploads]:
             if pdb_id not in [e['label'] for e in options]:
                 options.append({'label': pdb_id, 'value': pdb_id})
+                fname = pdb_id + "." + ext
                 print('uploaded', pdb_id)
-                files += pdb_id + '.' + ext + ','
+                #files += pdb_id + '.' + ext + ','
+
+                if fname not in files["uploaded"]:
+                    files["uploaded"].append(fname)
 
         return data, molStyles_dict, options, files, pdb_id, no_update
 
