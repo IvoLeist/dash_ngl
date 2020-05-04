@@ -84,7 +84,9 @@ data_dict = {
 component_id = 'nglViewer'
 viewer = html.Div(
     id='ngl-biomolecule-viewer',
-    children=[dash_ngl.DashNgl(id=component_id, data=[data_dict])],
+    children=[dash_ngl.DashNgl(
+        id=component_id,
+        data=[data_dict])],
 )
 
 about_html = [
@@ -112,7 +114,8 @@ about_html = [
 ]
 
 data_tab = [
-    html.Div(className='app-controls-name', children='Select structure'),
+    html.Div(className='app-controls-name',
+             children='Select structure'),
     dcc.Dropdown(
         id='pdb-dropdown',
         clearable=False,
@@ -368,7 +371,7 @@ app.layout = html.Div(
     id='main-page',
     children=[
         # looses the data when the browser/tab closes.
-        dcc.Store(id='uploaded-files', 
+        dcc.Store(id='uploaded-files',
                   storage_type='session'),
         html.Div(
             id='app-page-header',
