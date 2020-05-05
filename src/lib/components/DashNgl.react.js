@@ -255,6 +255,7 @@ export default class DashNgl extends Component {
       // check if already loaded
       if (structuresList.includes(filename)) {
         // If user has selected structure already just add the new Representation
+        console.log('load from browser')
         this.showStructure(
           stage.getComponentsByName(filename).list[0],
           molStyles,
