@@ -59,7 +59,7 @@ export default class DashNgl extends Component {
 
       // check if view should be resetet
       const resetView = data[0].resetView
-      if (oldSelection == newSelection && resetView == true){
+      if (oldSelection === newSelection && resetView === true){
         console.log('reset view')  
         return true
       }
