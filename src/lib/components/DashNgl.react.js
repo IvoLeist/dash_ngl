@@ -33,6 +33,10 @@ export default class DashNgl extends Component {
     console.log('component did mount')
   }
 
+  componentWillUnmount() {
+    console.log('component will unmount')
+  }
+
   // triggered by any update of the DOM (e.g. new dropdown selection)
   shouldComponentUpdate (prevProps, nextProps) {
     const { stageParameters, data, downloadImage, molStyles } = this.props
