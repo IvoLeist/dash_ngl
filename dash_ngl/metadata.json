@@ -48,10 +48,6 @@
             "type": null
           },
           {
-            "name": "molStyles",
-            "type": null
-          },
-          {
             "name": "sele",
             "type": null
           },
@@ -73,10 +69,6 @@
         "params": [
           {
             "name": "stageObj",
-            "type": null
-          },
-          {
-            "name": "molStyles",
             "type": null
           },
           {
@@ -112,10 +104,6 @@
             "type": null
           },
           {
-            "name": "molStyles",
-            "type": null
-          },
-          {
             "name": "structuresList",
             "type": null
           }
@@ -129,10 +117,6 @@
         "params": [
           {
             "name": "data",
-            "type": null
-          },
-          {
-            "name": "molStyles",
             "type": null
           },
           {
@@ -193,7 +177,7 @@
         "required": false,
         "description": "Parameters (in JSON format) for the stage object of ngl.\nCurrently implemented are the quality of the visualisation\nand the background colorFor a full list see:\nhttp://nglviewer.org/ngl/api/file/src/stage/stage.js.html",
         "defaultValue": {
-          "value": "{\n  quality: 'medium',\n  backgroundColor: 'white',\n  cameraType: 'perspective'\n}",
+          "value": "{\n  quality: 'medium',\n  backgroundColor: 'white',\n  cameraType: 'perspective',\n}",
           "computed": false
         }
       },
@@ -212,13 +196,17 @@
             "trim": {
               "name": "bool",
               "required": false
+            },
+            "defaultFilename": {
+              "name": "string",
+              "required": false
             }
           }
         },
         "required": false,
         "description": "Parameters (in JSON format) for exporting the image",
         "defaultValue": {
-          "value": "{\n  antialias: true,\n  transparent: true,\n  trim: true\n}",
+          "value": "{\n  antialias: true,\n  transparent: true,\n  trim: true,\n  defaultFilename: 'dashNGL_output'\n}",
           "computed": false
         }
       },
@@ -334,13 +322,17 @@
             "chosenAtomsRadius": {
               "name": "number",
               "required": true
+            },
+            "molSpacing_xAxis": {
+              "name": "number",
+              "required": true
             }
           }
         },
         "required": false,
         "description": "The data (in JSON format) that will be used to style the displayed molecule\nrepresentations: one or multiple selected molecule representation\n - Possible molecule styles:\n   'backbone,'ball+stick','cartoon', 'hyperball','licorice','line',\n   'ribbon',''rope','spacefill','surface','trace','tube'\n - Possible additional representations:\n   'axes','axes+box','helixorient','unitcell'\nchosenAtomsColor: color of the 'ball+stick' representation of the chosen atoms",
         "defaultValue": {
-          "value": "{\n  representations:['cartoon','axes+box'],\n  chosenAtomsColor:'#ffffff',\n  chosenAtomsRadius: 1\n}",
+          "value": "{\n  representations:['cartoon','axes+box'],\n  chosenAtomsColor:'#ffffff',\n  chosenAtomsRadius: 1,\n  molSpacing: 100,\n}",
           "computed": false
         }
       }

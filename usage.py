@@ -193,7 +193,23 @@ view_tab = [
         ],
     ),
     html.Div(
-        title='select chain color',
+        title='set molecules x-axis spacing',
+        className='app-controls-block',
+        id='ngl-mols-spacing',
+        children=[
+            html.P(
+                'x-axis spacing',
+                style={'fontWeight': 'bold', 'marginBottom': '10px'},
+            ),
+            dcc.Input(
+                id='molecules-xaxis-spacing',
+                placeholder='set x-axis spacing',
+                value=100,
+            )
+        ],
+    ),
+    html.Div(
+        title='set chain color',
         className='app-controls-block',
         id='ngl-mols-color',
         children=[
@@ -208,7 +224,7 @@ view_tab = [
         ],
     ),
     html.Div(
-        title='select chosen atoms color',
+        title='set chosen atoms color',
         className='app-controls-block',
         id='ngl-atom-color',
         children=[
@@ -223,7 +239,7 @@ view_tab = [
         ],
     ),
     html.Div(
-        title='select chosen atoms radius',
+        title='set chosen atoms radius',
         className='app-controls-block',
         id='ngl-atom-radius',
         children=[
@@ -633,7 +649,8 @@ def getUploadedData(uploaded_content):
         State('uploaded-files', 'data'),
         State('molecules-chain-color', 'value'),
         State('chosen-atoms-color', 'value'),
-        State('chosen-atoms-radius', 'value')
+        State('chosen-atoms-radius', 'value'),
+        State('molecules-xaxis-spacing','value')
     ],
 )
 def display_output(
@@ -647,7 +664,8 @@ def display_output(
     files,
     colors,
     chosenAtomsColor,
-    chosenAtomsRadius
+    chosenAtomsRadius,
+    molSpacing_xAxis,
 ):
     print('selection,pdbString_clicks,pdbString,type uploaded_content', 'files')
     print(selection, molStyles_list, pdbString_clicks, pdbString, type(uploaded_content), type(files))
@@ -671,7 +689,8 @@ def display_output(
     molStyles_dict = {
         'representations': molStyles_list,
         'chosenAtomsColor': chosenAtomsColor,
-        'chosenAtomsRadius': float(chosenAtomsRadius)
+        'chosenAtomsRadius': float(chosenAtomsRadius),
+        'molSpacing_xAxis': float(molSpacing_xAxis)
     }
 
     if input_id is None:
@@ -825,6 +844,7 @@ def download_image(n_clicks, antialias, trim, transparent):
             'antialias': bool_dict[antialias],
             'trim': bool_dict[trim],
             'transparent': bool_dict[transparent],
+            'defaultFilename': 'output'
         },
     )
 

@@ -35,11 +35,12 @@ Currently implemented are the quality of the visualisation
 and the background colorFor a full list see:
 http://nglviewer.org/ngl/api/file/src/stage/stage.js.html}
 
-\item{imageParameters}{Lists containing elements 'antialias', 'transparent', 'trim'.
+\item{imageParameters}{Lists containing elements 'antialias', 'transparent', 'trim', 'defaultfilename'.
 those elements have the following types:
   - antialias (logical; optional)
   - transparent (logical; optional)
-  - trim (logical; optional). Parameters (in JSON format) for exporting the image}
+  - trim (logical; optional)
+  - defaultfilename (character; optional). Parameters (in JSON format) for exporting the image}
 
 \item{downloadImage}{Logical. flag if download image was pressed}
 
@@ -81,11 +82,12 @@ config.type: format of config.input
 resetView: bool if the view should be resettet
 uploaded: bool if the file was uploaded}
 
-\item{molStyles}{Lists containing elements 'representations', 'chosenatomscolor', 'chosenatomsradius'.
+\item{molStyles}{Lists containing elements 'representations', 'chosenatomscolor', 'chosenatomsradius', 'molspacing_xaxis'.
 those elements have the following types:
   - representations (list of characters; optional)
   - chosenatomscolor (character; required)
-  - chosenatomsradius (numeric; required). The data (in JSON format) that will be used to style the displayed molecule
+  - chosenatomsradius (numeric; required)
+  - molspacing_xaxis (numeric; required). The data (in JSON format) that will be used to style the displayed molecule
 representations: one or multiple selected molecule representation
  - Possible molecule styles:
    'backbone,'ball+stick','cartoon', 'hyperball','licorice','line',
