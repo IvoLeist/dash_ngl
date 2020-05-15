@@ -332,7 +332,7 @@
         "required": false,
         "description": "The data (in JSON format) that will be used to style the displayed molecule\nrepresentations: one or multiple selected molecule representation\n - Possible molecule styles:\n   'backbone,'ball+stick','cartoon', 'hyperball','licorice','line',\n   'ribbon',''rope','spacefill','surface','trace','tube'\n - Possible additional representations:\n   'axes','axes+box','helixorient','unitcell'\nchosenAtomsColor: color of the 'ball+stick' representation of the chosen atoms",
         "defaultValue": {
-          "value": "{\n  representations:['cartoon','axes+box'],\n  chosenAtomsColor:'#ffffff',\n  chosenAtomsRadius: 1,\n  molSpacing: 100,\n}",
+          "value": "{\n  representations:['cartoon','axes+box'],\n  chosenAtomsColor:'#808080',\n  chosenAtomsRadius: 1,\n  molSpacing_xAxis: 100,\n}",
           "computed": false
         }
       }

@@ -142,6 +142,8 @@ export default class DashNgl extends Component {
         console.log(blob)
         download( blob, imageParameters.defaultFilename + ".png" );
     });
+  //set downloadImage to false to prevent retriggering of the download handler
+  this.props.setProps({'downloadImage': false})
   }
 
   //helper function for highlighting atoms
@@ -385,7 +387,7 @@ DashNgl.defaultProps = {
     representations:['cartoon','axes+box'],
     chosenAtomsColor:'#808080',
     chosenAtomsRadius: 1,
-    molSpacing: 100,
+    molSpacing_xAxis: 100,
   }
 }
 

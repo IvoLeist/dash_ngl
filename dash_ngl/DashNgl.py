@@ -102,9 +102,9 @@ Those keys have the following types:
   - uploaded (boolean; required)
 - molStyles (dict; default {
   representations:['cartoon','axes+box'],
-  chosenAtomsColor:'#ffffff',
+  chosenAtomsColor:'#808080',
   chosenAtomsRadius: 1,
-  molSpacing: 100,
+  molSpacing_xAxis: 100,
 }): The data (in JSON format) that will be used to style the displayed molecule
 representations: one or multiple selected molecule representation
  - Possible molecule styles:

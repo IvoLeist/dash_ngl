@@ -13,6 +13,12 @@ and they have for our purpose a way to complex code base to maintain.
 
 Therefore I have build a dash [NGL](https://github.com/arose/ngl) viewer tailored to our neeeds.
 
+It should be part of [dash-bio](https://github.com/plotly/dash-bio) [soonish](https://github.com/plotly/dash-bio/pull/496)
+
+Follow me on Twitter I'll annouce its release there:
+[![](https://img.shields.io/twitter/follow/ivoleist.svg)](https://twitter.com/intent/follow?screen_name=ivoleist)
+
+
 ## Features
 
 - [x] Protein selection by dropdown
