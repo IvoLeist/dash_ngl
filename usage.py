@@ -80,19 +80,10 @@ data_dict = {
 
 
 # Canvas container to display the structures
-# style is only needed in the tabbed layout
 component_id = "nglViewer"
 viewer = html.Div(
     id="ngl-biomolecule-viewer",
     children=[dash_ngl.DashNgl(id=component_id, data=[data_dict])],
-    style={
-        "display": "inline-block",
-        "width": "100%",
-        "float": "left",
-        # "marginTop": "50px",
-        # "marginRight": "50px",
-        "border": "1px lightgray solid",
-    },
 )
 
 about_html = [
@@ -366,23 +357,6 @@ tabs = html.Div(
     ],
 )
 
-# tabbed layout to show that switching tabs unmounts the dash component
-viewer_tabs = html.Div(
-    children=[
-        dcc.Tabs(
-            children=[
-                dcc.Tab(label="viewer", children=viewer),
-                dcc.Tab(
-                    children=html.Div(
-                        ['open the console you will see "component will unmount"']
-                    )
-                ),
-            ]
-        )
-    ]
-)
-
-
 # LAYOUT
 app.layout = html.Div(
     id="main-page",
@@ -402,8 +376,7 @@ app.layout = html.Div(
                     className="app-body",
                     children=[
                         tabs,
-                        # viewer,
-                        viewer_tabs,
+                        viewer
                         # using dcc.Loading leads to remounting with every selection change
                         # dcc.Loading(viewer),
                     ],
