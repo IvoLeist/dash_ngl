@@ -70,7 +70,7 @@ data_dict = {
     "selectedValue": "placeholder",
     "resetView": False,
     "chain": "ALL",
-    "range": "ALL",
+    "aaRange": "ALL",
     "chosen": {"atoms": "", "residues": ""},
     "color": "#e41a1c",
     "filename": "placeholder",
@@ -406,7 +406,7 @@ def createDict(
         "ext": ext,
         "selectedValue": selection,
         "chain": chain,
-        "range": aa_range,
+        "aaRange": aa_range,
         "chosen": highlight_dic,
         "color": color,
         "config": {"type": "text/plain", "input": contents},
@@ -634,7 +634,7 @@ def display_output(
         "representations": molStyles_list,
         "chosenAtomsColor": chosenAtomsColor,
         "chosenAtomsRadius": float(chosenAtomsRadius),
-        "molSpacing_xAxis": float(molSpacing_xAxis),
+        "molSpacingXaxis": float(molSpacing_xAxis),
     }
 
     if input_id is None:

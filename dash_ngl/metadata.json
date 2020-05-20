@@ -76,7 +76,7 @@
             "type": null
           },
           {
-            "name": "range",
+            "name": "aaRange",
             "type": null
           },
           {
@@ -226,7 +226,7 @@
           "name": "string"
         },
         "required": false,
-        "description": "Variable which defines how many molecules should be shown and/or which chain\nThe following format needs to be used:\npdbID1.chain:start-end@atom1,atom2_pdbID2.chain:start-end\n. indicates that only one chain should be shown\n: indicates that a specific range should be shown (e.g. 1-50)\n@ indicates that chosen atoms should be highlighted (e.g. @50,100,150)\n _ indicates that more than one protein should be shown"
+        "description": "Variable which defines how many molecules should be shown and/or which chain\nThe following format needs to be used:\npdbID1.chain:start-end@atom1,atom2_pdbID2.chain:start-end\n. indicates that only one chain should be shown\n: indicates that a specific amino acid range should be shown (e.g. 1-50)\n@ indicates that chosen atoms should be highlighted (e.g. @50,100,150)\n _ indicates that more than one protein should be shown"
       },
       "data": {
         "type": {
@@ -250,7 +250,7 @@
                 "name": "string",
                 "required": true
               },
-              "range": {
+              "aaRange": {
                 "name": "string",
                 "required": true
               },
@@ -298,9 +298,9 @@
           }
         },
         "required": false,
-        "description": "The data (in JSON format) that will be used to display the molecule\nfilename: name of the used pdb/cif file\next: file extensions (pdb or cif)\nselectedValue: pdbString\nmolStyles: selected molecule representation (cartoon, stick, sphere)\nchain: selected chain\ncolor: chain color\nrange: selected residues range\nconfig.input: content of the pdb file\nconfig.type: format of config.input\nresetView: bool if the view should be resettet\nuploaded: bool if the file was uploaded",
+        "description": "The data (in JSON format) that will be used to display the molecule\nfilename: name of the used pdb/cif file\next: file extensions (pdb or cif)\nselectedValue: pdbString\nmolStyles: selected molecule representation (cartoon, stick, sphere)\nchain: selected chain\ncolor: chain color\naaRange: selected residues range\nconfig.input: content of the pdb file\nconfig.type: format of config.input\nresetView: bool if the view should be resettet\nuploaded: bool if the file was uploaded",
         "defaultValue": {
-          "value": "[{\n  filename: 'placeholder',\n  ext: '',\n  selectedValue: 'placeholder',\n  chain: 'ALL',\n  range: 'ALL',\n  color: 'red',\n  chosen: {\n    'chosenAtoms':'',\n    'chosenResidues':''\n  },\n  config: {\n    type: 'text/plain',\n    input: ''\n  },\n  uploaded: true,\n  resetView: false,\n}]",
+          "value": "[{\n  filename: 'placeholder',\n  ext: '',\n  selectedValue: 'placeholder',\n  chain: 'ALL',\n  aaRange: 'ALL',\n  color: 'red',\n  chosen: {\n    'chosenAtoms':'',\n    'chosenResidues':''\n  },\n  config: {\n    type: 'text/plain',\n    input: ''\n  },\n  uploaded: true,\n  resetView: false,\n}]",
           "computed": false
         }
       },
@@ -323,7 +323,7 @@
               "name": "number",
               "required": true
             },
-            "molSpacing_xAxis": {
+            "molSpacingXaxis": {
               "name": "number",
               "required": true
             }
@@ -332,7 +332,7 @@
         "required": false,
         "description": "The data (in JSON format) that will be used to style the displayed molecule\nrepresentations: one or multiple selected molecule representation\n - Possible molecule styles:\n   'backbone,'ball+stick','cartoon', 'hyperball','licorice','line',\n   'ribbon',''rope','spacefill','surface','trace','tube'\n - Possible additional representations:\n   'axes','axes+box','helixorient','unitcell'\nchosenAtomsColor: color of the 'ball+stick' representation of the chosen atoms",
         "defaultValue": {
-          "value": "{\n  representations:['cartoon','axes+box'],\n  chosenAtomsColor:'#808080',\n  chosenAtomsRadius: 1,\n  molSpacing_xAxis: 100,\n}",
+          "value": "{\n  representations:['cartoon','axes+box'],\n  chosenAtomsColor:'#808080',\n  chosenAtomsRadius: 1,\n  molSpacingXaxis: 100,\n}",
           "computed": false
         }
       }

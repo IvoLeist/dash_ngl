@@ -48,17 +48,17 @@ those elements have the following types:
 The following format needs to be used:
 pdbID1.chain:start-end@atom1,atom2_pdbID2.chain:start-end
 . indicates that only one chain should be shown
-: indicates that a specific range should be shown (e.g. 1-50)
+: indicates that a specific amino acid range should be shown (e.g. 1-50)
 @ indicates that chosen atoms should be highlighted (e.g. @50,100,150)
  _ indicates that more than one protein should be shown}
 
-\item{data}{List of lists containing elements 'filename', 'ext', 'selectedvalue', 'chain', 'range', 'color', 'chosen', 'config', 'resetview', 'uploaded'.
+\item{data}{List of lists containing elements 'filename', 'ext', 'selectedvalue', 'chain', 'aarange', 'color', 'chosen', 'config', 'resetview', 'uploaded'.
 those elements have the following types:
   - filename (character; required)
   - ext (character; required)
   - selectedvalue (character; required)
   - chain (character; required)
-  - range (character; required)
+  - aarange (character; required)
   - color (character; required)
   - chosen (optional): . chosen has the following type: lists containing elements 'residues', 'atoms'.
 those elements have the following types:
@@ -76,18 +76,18 @@ selectedValue: pdbString
 molStyles: selected molecule representation (cartoon, stick, sphere)
 chain: selected chain
 color: chain color
-range: selected residues range
+aaRange: selected residues range
 config.input: content of the pdb file
 config.type: format of config.input
 resetView: bool if the view should be resettet
 uploaded: bool if the file was uploaded}
 
-\item{molStyles}{Lists containing elements 'representations', 'chosenatomscolor', 'chosenatomsradius', 'molspacing_xaxis'.
+\item{molStyles}{Lists containing elements 'representations', 'chosenatomscolor', 'chosenatomsradius', 'molspacingxaxis'.
 those elements have the following types:
   - representations (list of characters; optional)
   - chosenatomscolor (character; required)
   - chosenatomsradius (numeric; required)
-  - molspacing_xaxis (numeric; required). The data (in JSON format) that will be used to style the displayed molecule
+  - molspacingxaxis (numeric; required). The data (in JSON format) that will be used to style the displayed molecule
 representations: one or multiple selected molecule representation
  - Possible molecule styles:
    'backbone,'ball+stick','cartoon', 'hyperball','licorice','line',

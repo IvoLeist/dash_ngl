@@ -51,7 +51,7 @@ Those keys have the following types:
 The following format needs to be used:
 pdbID1.chain:start-end@atom1,atom2_pdbID2.chain:start-end
 . indicates that only one chain should be shown
-: indicates that a specific range should be shown (e.g. 1-50)
+: indicates that a specific amino acid range should be shown (e.g. 1-50)
 @ indicates that chosen atoms should be highlighted (e.g. @50,100,150)
  _ indicates that more than one protein should be shown
 - data (dict; default [{
@@ -59,7 +59,7 @@ pdbID1.chain:start-end@atom1,atom2_pdbID2.chain:start-end
   ext: '',
   selectedValue: 'placeholder',
   chain: 'ALL',
-  range: 'ALL',
+  aaRange: 'ALL',
   color: 'red',
   chosen: {
     'chosenAtoms':'',
@@ -78,17 +78,17 @@ selectedValue: pdbString
 molStyles: selected molecule representation (cartoon, stick, sphere)
 chain: selected chain
 color: chain color
-range: selected residues range
+aaRange: selected residues range
 config.input: content of the pdb file
 config.type: format of config.input
 resetView: bool if the view should be resettet
-uploaded: bool if the file was uploaded. data has the following type: list of dicts containing keys 'filename', 'ext', 'selectedValue', 'chain', 'range', 'color', 'chosen', 'config', 'resetView', 'uploaded'.
+uploaded: bool if the file was uploaded. data has the following type: list of dicts containing keys 'filename', 'ext', 'selectedValue', 'chain', 'aaRange', 'color', 'chosen', 'config', 'resetView', 'uploaded'.
 Those keys have the following types:
   - filename (string; required)
   - ext (string; required)
   - selectedValue (string; required)
   - chain (string; required)
-  - range (string; required)
+  - aaRange (string; required)
   - color (string; required)
   - chosen (dict; optional): chosen has the following type: dict containing keys 'residues', 'atoms'.
 Those keys have the following types:
@@ -104,7 +104,7 @@ Those keys have the following types:
   representations:['cartoon','axes+box'],
   chosenAtomsColor:'#808080',
   chosenAtomsRadius: 1,
-  molSpacing_xAxis: 100,
+  molSpacingXaxis: 100,
 }): The data (in JSON format) that will be used to style the displayed molecule
 representations: one or multiple selected molecule representation
  - Possible molecule styles:
@@ -112,12 +112,12 @@ representations: one or multiple selected molecule representation
    'ribbon',''rope','spacefill','surface','trace','tube'
  - Possible additional representations:
    'axes','axes+box','helixorient','unitcell'
-chosenAtomsColor: color of the 'ball+stick' representation of the chosen atoms. molStyles has the following type: dict containing keys 'representations', 'chosenAtomsColor', 'chosenAtomsRadius', 'molSpacing_xAxis'.
+chosenAtomsColor: color of the 'ball+stick' representation of the chosen atoms. molStyles has the following type: dict containing keys 'representations', 'chosenAtomsColor', 'chosenAtomsRadius', 'molSpacingXaxis'.
 Those keys have the following types:
   - representations (list of strings; optional)
   - chosenAtomsColor (string; required)
   - chosenAtomsRadius (number; required)
-  - molSpacing_xAxis (number; required)"""
+  - molSpacingXaxis (number; required)"""
     @_explicitize_args
     def __init__(self, id=Component.UNDEFINED, viewportStyle=Component.UNDEFINED, stageParameters=Component.UNDEFINED, imageParameters=Component.UNDEFINED, downloadImage=Component.UNDEFINED, pdbString=Component.UNDEFINED, data=Component.UNDEFINED, molStyles=Component.UNDEFINED, **kwargs):
         self._prop_names = ['id', 'viewportStyle', 'stageParameters', 'imageParameters', 'downloadImage', 'pdbString', 'data', 'molStyles']
