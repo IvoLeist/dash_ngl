@@ -11,5 +11,3 @@ BugReports: https://github.com/https://github.com/IvoLeist/dash-ngl/issues
 Encoding: UTF-8
 LazyData: true
 KeepSource: true
-Author: Ivo Leist [aut]
-Maintainer: Ivo Leist <Ivo.leist@googlemail.com>
