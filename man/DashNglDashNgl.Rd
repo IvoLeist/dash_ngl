@@ -10,8 +10,9 @@ The NglMoleculeViewer is used to render schematic diagrams of biomolecules in ri
 }
 
 \usage{
-DashNglDashNgl(id=NULL, viewportStyle=NULL, stageParameters=NULL, imageParameters=NULL,
-downloadImage=NULL, pdbString=NULL, data=NULL, molStyles=NULL)
+DashNglDashNgl(id=NULL, viewportStyle=NULL, stageParameters=NULL,
+imageParameters=NULL, downloadImage=NULL, pdbString=NULL,
+data=NULL, molStyles=NULL)
 }
 
 \arguments{
@@ -96,3 +97,6 @@ representations: one or multiple selected molecule representation
    'axes','axes+box','helixorient','unitcell'
 chosenAtomsColor: color of the 'ball+stick' representation of the chosen atoms}
 }
+
+\value{named list of JSON elements corresponding to React.js properties and their values}
+
