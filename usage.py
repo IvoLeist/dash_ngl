@@ -58,6 +58,8 @@ representations = [
 
 # PDB examples
 pdbs_list = [
+    'MPRO',
+    'PLPR',
     'NSP2',
     'NSP4',
     'NSP6',
