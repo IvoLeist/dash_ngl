@@ -83,12 +83,13 @@ config.type: format of config.input
 resetView: bool if the view should be resettet
 uploaded: bool if the file was uploaded}
 
-\item{molStyles}{Lists containing elements 'representations', 'chosenatomscolor', 'chosenatomsradius', 'molspacingxaxis'.
+\item{molStyles}{Lists containing elements 'representations', 'chosenatomscolor', 'chosenatomsradius', 'molspacingxaxis', 'sidebyside'.
 those elements have the following types:
   - representations (list of characters; optional)
   - chosenatomscolor (character; required)
   - chosenatomsradius (numeric; required)
-  - molspacingxaxis (numeric; required). The data (in JSON format) that will be used to style the displayed molecule
+  - molspacingxaxis (numeric; required)
+  - sidebyside (logical; required). The data (in JSON format) that will be used to style the displayed molecule
 representations: one or multiple selected molecule representation
  - Possible molecule styles:
    'backbone,'ball+stick','cartoon', 'hyperball','licorice','line',

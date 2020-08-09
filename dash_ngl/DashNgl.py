@@ -62,8 +62,8 @@ pdbID1.chain:start-end@atom1,atom2_pdbID2.chain:start-end
   aaRange: 'ALL',
   color: 'red',
   chosen: {
-    'chosenAtoms':'',
-    'chosenResidues':''
+    'atoms':'',
+    'residues':''
   },
   config: {
     type: 'text/plain',
@@ -105,6 +105,7 @@ Those keys have the following types:
   chosenAtomsColor:'#808080',
   chosenAtomsRadius: 1,
   molSpacingXaxis: 100,
+  sideByside: false,
 }): The data (in JSON format) that will be used to style the displayed molecule
 representations: one or multiple selected molecule representation
  - Possible molecule styles:
@@ -112,12 +113,13 @@ representations: one or multiple selected molecule representation
    'ribbon',''rope','spacefill','surface','trace','tube'
  - Possible additional representations:
    'axes','axes+box','helixorient','unitcell'
-chosenAtomsColor: color of the 'ball+stick' representation of the chosen atoms. molStyles has the following type: dict containing keys 'representations', 'chosenAtomsColor', 'chosenAtomsRadius', 'molSpacingXaxis'.
+chosenAtomsColor: color of the 'ball+stick' representation of the chosen atoms. molStyles has the following type: dict containing keys 'representations', 'chosenAtomsColor', 'chosenAtomsRadius', 'molSpacingXaxis', 'sideByside'.
 Those keys have the following types:
   - representations (list of strings; optional)
   - chosenAtomsColor (string; required)
   - chosenAtomsRadius (number; required)
-  - molSpacingXaxis (number; required)"""
+  - molSpacingXaxis (number; required)
+  - sideByside (boolean; required)"""
     @_explicitize_args
     def __init__(self, id=Component.UNDEFINED, viewportStyle=Component.UNDEFINED, stageParameters=Component.UNDEFINED, imageParameters=Component.UNDEFINED, downloadImage=Component.UNDEFINED, pdbString=Component.UNDEFINED, data=Component.UNDEFINED, molStyles=Component.UNDEFINED, **kwargs):
         self._prop_names = ['id', 'viewportStyle', 'stageParameters', 'imageParameters', 'downloadImage', 'pdbString', 'data', 'molStyles']

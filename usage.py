@@ -103,7 +103,7 @@ viewer = html.Div(
     id='ngl-biomolecule-viewer',
     children=[dash_ngl.DashNgl(id=component_id, data=[data_dict])],
 )
-
+                 
 about_html = [
     html.H4(className='what-is', children='What is Ngl Molecule Viewer?'),
     html.P(
@@ -191,7 +191,8 @@ view_tab = [
         className='app-controls-block',
         id='ngl-mols-style',
         children=[
-            html.P('Style', style={'fontWeight': 'bold', 'marginBottom': '10px'}),
+            html.P('Style',
+                   style={'fontWeight': 'bold', 'marginBottom': '10px'}),
             dcc.Dropdown(
                 id='molecules-representation-style',
                 options=[{'label': e, 'value': e.lower()} for e in representations],
@@ -202,12 +203,29 @@ view_tab = [
         ],
     ),
     html.Div(
+        title='show molecules side by side',
+        className='app-controls-block',
+        id='ngl-mols-sideByside',
+        children=[
+            html.P('if multiple molecules show them side by side?',
+                   style={'fontWeight': 'bold', 'marginBottom': '10px'}),
+            dcc.RadioItems(
+                id='sideByside-selector',
+                options=[
+                    {'label': 'Yes (mols cannot be moved/rotated independently)', 'value':'True'},
+                    {'label': 'No (move/rotate mols independently by ctrl)', 'value':'False'},
+                ],
+                value='False'
+            ),
+        ],
+    ),
+    html.Div(
         title='set molecules x-axis spacing',
         className='app-controls-block',
         id='ngl-mols-spacing',
         children=[
             html.P(
-                'x-axis spacing', style={'fontWeight': 'bold', 'marginBottom': '10px'},
+                'x-axis spacing (if side by side yes)', style={'fontWeight': 'bold', 'marginBottom': '10px'},
             ),
             dcc.Input(
                 id='molecules-xaxis-spacing',
@@ -216,6 +234,7 @@ view_tab = [
             ),
         ],
     ),
+    html.P('To apply the settings go back to data and submit again'),
     # modifying the chain colors only works when individual chains are displayed
     html.Div(
         title='set chain color',
@@ -353,6 +372,10 @@ download_tab = [
     ),
 ]
 
+htmls = [('About', 'what-is', about_html),
+         ('Data', 'upload-select', data_tab),
+         ('View', 'view-options', view_tab),
+         ('Download', 'download-options', download_tab)]
 
 tabs = html.Div(
     id='ngl-control-tabs',
@@ -363,25 +386,10 @@ tabs = html.Div(
             value='what-is',
             children=[
                 dcc.Tab(
-                    label='About',
-                    value='what-is',
-                    children=html.Div(className='control-tab', children=about_html),
-                ),
-                dcc.Tab(
-                    label='Data',
-                    value='upload-select',
-                    children=html.Div(className='control-tab', children=data_tab),
-                ),
-                dcc.Tab(
-                    label='View',
-                    value='view-options',
-                    children=html.Div(className='control-tab', children=view_tab),
-                ),
-                dcc.Tab(
-                    label='Download',
-                    value='download-options',
-                    children=html.Div(className='control-tab', children=download_tab),
-                ),
+                    label=l,
+                    value=v,
+                    children=html.Div(className='control-tab', children=h),
+                ) for l, v, h in htmls
             ],
         ),
     ],
@@ -627,6 +635,7 @@ def getUploadedData(uploaded_content):
         State('chosen-atoms-color', 'value'),
         State('chosen-atoms-radius', 'value'),
         State('molecules-xaxis-spacing', 'value'),
+        State('sideByside-selector', 'value')
     ],
 )
 def display_output(
@@ -642,6 +651,7 @@ def display_output(
         chosenAtomsColor,
         chosenAtomsRadius,
         molSpacing_xAxis,
+        sideByside_text
 ):
     print('selection,pdbString_clicks,pdbString,type uploaded_content', 'files')
     print(
@@ -670,12 +680,20 @@ def display_output(
 
     print('triggered', input_id)
 
+
+    sideByside_bool = False
+
+    if sideByside_text == 'True':
+        sideByside_bool = True
+
     molStyles_dict = {
         'representations': molStyles_list,
         'chosenAtomsColor': chosenAtomsColor,
         'chosenAtomsRadius': float(chosenAtomsRadius),
         'molSpacingXaxis': float(molSpacing_xAxis),
+        'sideByside': sideByside_bool,
     }
+    print (molStyles_dict)
 
     if input_id is None:
         return [data_dict], molStyles_dict, options, files, no_update, no_update, no_update

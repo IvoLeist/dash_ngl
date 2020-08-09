@@ -100,7 +100,7 @@ export default class DashNgl extends Component {
   // called only if shouldComponentUpdate evaluates to true
   componentDidUpdate () {
     console.log('updated')
-    const { stageParameters, data, downloadImage} = this.props
+    const { stageParameters, data, downloadImage, sideByside} = this.props
     const { stage, structuresList } = this.state
     console.log(downloadImage)
     const newSelection = data[0].selectedValue
@@ -118,7 +118,7 @@ export default class DashNgl extends Component {
         stage.eachComponent(function (comp) {
           comp.removeAllRepresentations()
         })
-        this.processDataFromBackend(data, structuresList)
+        this.processDataFromBackend(data, structuresList, sideByside)
     }
 
     if (downloadImage === true){
@@ -196,8 +196,9 @@ export default class DashNgl extends Component {
   }
 
   // helper functions which styles the output of loadStructure/loadData
-  showStructure (stageObj, chain, aaRange, chosen, color, xOffset) {
+  showStructure (stageObj, chain, aaRange, chosen, color, xOffset, sideByside) {
     const { stage, orientationMatrix } = this.state
+    let struc = stageObj
     let sele = ':'
 
     console.log(chosen)
@@ -207,25 +208,31 @@ export default class DashNgl extends Component {
 
     if (chain === 'ALL'){
       this.addMolStyle(stageObj,sele, chosen, color)
-    } else {
+    } 
+    else {
       sele += chain
       if (aaRange !== 'ALL') {
         sele += '/0 and ' + aaRange
         console.log (sele)
       }
 
-      const selection = new Selection(sele)
-      const structure = stageObj.structure.getView(selection)
-      const pa = structure.getPrincipalAxes()
-      const struc = stage.addComponentFromObject(structure)
-      const strucCenter = struc.getCenter()
+      if (sideByside == true){
+        const selection = new Selection(sele)
+        const structure = stageObj.structure.getView(selection)
+        struc = stage.addComponentFromObject(structure)
+        
+        const strucCenter = struc.getCenter()
+        const pa = structure.getPrincipalAxes()
+  
+        struc.setRotation(pa.getRotationQuaternion())
+        struc.setPosition(
+          [(0-strucCenter.x)-xOffset,
+            0-strucCenter.y,
+            0-strucCenter.z]
+            )
+      }
 
-      struc.setRotation(pa.getRotationQuaternion())
-      struc.setPosition(
-        [(0-strucCenter.x)-xOffset,
-          0-strucCenter.y,
-          0-strucCenter.z]
-          )
+      // const struc=stageObj
       this.addMolStyle(struc, sele, chosen, color)
     } 
     
@@ -255,6 +262,7 @@ export default class DashNgl extends Component {
     for (var i = 0; i < data.length; i++) {
       const filename = data[i].filename
       const xOffset = i * molStyles.molSpacingXaxis
+      const sideByside = molStyles.sideByside
       
       // check if already loaded
       if (structuresList.includes(filename)) {
@@ -266,9 +274,10 @@ export default class DashNgl extends Component {
           data[i].aaRange,
           data[i].chosen,
           data[i].color,
-          xOffset)
+          xOffset,
+          sideByside)
       } else { // load from backend
-        this.loadData(data[i], xOffset)
+        this.loadData(data[i], xOffset, sideByside)
       }
     }
     // const center = stage.getCenter()
@@ -306,7 +315,7 @@ export default class DashNgl extends Component {
     // console.log(orientationMatrix2)
   }
 
-  loadData (data, xOffset) {
+  loadData (data, xOffset, sideByside) {
     console.log('load from backend')
     const {stage} = this.state
     const stringBlob = new Blob([data.config.input], { type: data.config.type })
@@ -319,7 +328,8 @@ export default class DashNgl extends Component {
         data.aaRange,
         data.chosen,
         data.color,
-        xOffset
+        xOffset,
+        sideByside
       )
 
       this.setState(state => ({
@@ -364,8 +374,8 @@ const defaultData = [{
   aaRange: 'ALL',
   color: 'red',
   chosen: {
-    'chosenAtoms':'',
-    'chosenResidues':''
+    'atoms':'',
+    'residues':''
   },
   config: {
     type: 'text/plain',
@@ -388,6 +398,7 @@ DashNgl.defaultProps = {
     chosenAtomsColor:'#808080',
     chosenAtomsRadius: 1,
     molSpacingXaxis: 100,
+    sideByside: false,
   }
 }
 
@@ -435,7 +446,7 @@ DashNgl.propTypes = {
    * flag if download image was pressed
    */
   downloadImage: PropTypes.bool,
-
+  
   /**
    * Variable which defines how many molecules should be shown and/or which chain
    * The following format needs to be used:
@@ -446,7 +457,7 @@ DashNgl.propTypes = {
    *  _ indicates that more than one protein should be shown
    */
   pdbString: PropTypes.string,
-
+  
   /**
    * The data (in JSON format) that will be used to display the molecule
    * filename: name of the used pdb/cif file
@@ -480,22 +491,24 @@ DashNgl.propTypes = {
       resetView: PropTypes.bool.isRequired, 
       uploaded: PropTypes.bool.isRequired,
     })
-  ),
-  /**
-   * The data (in JSON format) that will be used to style the displayed molecule
-   * representations: one or multiple selected molecule representation
-   *  - Possible molecule styles:
-   *    'backbone,'ball+stick','cartoon', 'hyperball','licorice','line',
-   *    'ribbon',''rope','spacefill','surface','trace','tube'
-   *  - Possible additional representations:
-   *    'axes','axes+box','helixorient','unitcell'
-   * chosenAtomsColor: color of the 'ball+stick' representation of the chosen atoms
-   */
-  molStyles:
+    ),
+    /**
+     * The data (in JSON format) that will be used to style the displayed molecule
+     * representations: one or multiple selected molecule representation
+     *  - Possible molecule styles:
+     *    'backbone,'ball+stick','cartoon', 'hyperball','licorice','line',
+     *    'ribbon',''rope','spacefill','surface','trace','tube'
+     *  - Possible additional representations:
+     *    'axes','axes+box','helixorient','unitcell'
+     * chosenAtomsColor: color of the 'ball+stick' representation of the chosen atoms
+     */
+    molStyles:
     PropTypes.exact({ 
       representations: PropTypes.arrayOf(PropTypes.string),
       chosenAtomsColor: PropTypes.string.isRequired,
       chosenAtomsRadius: PropTypes.number.isRequired,
-      molSpacingXaxis: PropTypes.number.isRequired
+      molSpacingXaxis: PropTypes.number.isRequired,
+      sideByside: PropTypes.bool.isRequired, 
     })
-}
+  }
+  
